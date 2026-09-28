@@ -275,13 +275,34 @@ try{
 
 /* Login anónimo: invisible para el usuario, pero da a cada navegador una identidad
    real que Firestore puede verificar en las reglas de seguridad. */
+function showBanner(msg){
+  let b = document.getElementById('errbanner');
+  if(!b){
+    b = document.createElement('div'); b.id = 'errbanner';
+    b.style.cssText = 'position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:999;max-width:92vw;width:400px;padding:12px 16px;border-radius:16px;background:rgba(255,80,80,.92);color:#fff;font:600 .82rem Manrope,sans-serif;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.35);cursor:pointer';
+    b.onclick = () => b.remove();
+    document.body.appendChild(b);
+  }
+  b.textContent = msg + '  (toca para cerrar)';
+}
+function explainFirebaseError(err){
+  const c = (err && (err.code || err.message)) || '';
+  if(c.includes('operation-not-allowed')) return 'Falta activar el acceso Anónimo: Firebase → Authentication → Sign-in method → Anónimo → Habilitar.';
+  if(c.includes('configuration-not-found')) return 'En Firebase → Authentication pulsa "Comenzar" para activarlo.';
+  if(c.includes('permission-denied')) return 'Firestore rechazó la operación: revisa que las reglas estén publicadas en Firestore (no en Realtime Database).';
+  if(c.includes('api-key')) return 'La apiKey de firebaseConfig no es válida.';
+  return 'Error de Firebase: ' + c;
+}
 function ensureAuth(){
   if(!auth) return Promise.resolve();
   return new Promise(resolve=>{
+    let done = false;
+    const finish = () => { if(!done){ done = true; resolve(); } };
     auth.onAuthStateChanged(u=>{
-      if(u){ myUid = u.uid; resolve(); }
-      else auth.signInAnonymously().catch(err=>console.error('Auth error', err));
+      if(u){ myUid = u.uid; finish(); }
+      else auth.signInAnonymously().catch(err=>{ console.error('Auth error', err); showBanner(explainFirebaseError(err)); finish(); });
     });
+    setTimeout(()=>{ if(!done){ showBanner('Firebase tarda demasiado en responder. Revisa Authentication (Anónimo activado) y tu conexión.'); finish(); } }, 8000);
   });
 }
 /* Ata tu número de teléfono a tu identidad de auth, una sola vez (las reglas no permiten cambiarlo luego). */
@@ -357,11 +378,21 @@ $('#btn-finish').onclick = async () => {
   if(!name) return;
   const phone = $('#cc').value + ' ' + $('#phone-input').value.trim();
   user = { phone, name, color: chosenColor, photo: chosenPhoto };
-  localStorage.setItem('yapp_user', JSON.stringify(user));
-  await ensureAuth();
-  await bindPhoneToUid(phone);
-  if(db) await db.collection('users').doc(digits(phone)).set(user);
-  launchApp();
+  const btn = $('#btn-finish'); btn.disabled = true; btn.textContent = 'Creando cuenta…';
+  try{
+    await ensureAuth();
+    if(db && !myUid) throw {code:'auth/no-session'};
+    await bindPhoneToUid(phone);
+    if(db) await db.collection('users').doc(digits(phone)).set(user);
+    localStorage.setItem('yapp_user', JSON.stringify(user));
+    launchApp();
+  }catch(err){
+    console.error(err);
+    showBanner(explainFirebaseError(err));
+    user = null;
+  }finally{
+    btn.disabled = false; btn.textContent = 'Empezar a usar Yapp';
+  }
 };
 
 /* ---------- APP SHELL ---------- */
@@ -577,8 +608,10 @@ async function sendMsg(){
 
 (async () => {
   await ensureAuth();
-  if(user){ await bindPhoneToUid(user.phone); launchApp(); }
-  else { $('#onboarding').style.display = 'flex'; }
+  if(user){
+    try{ await bindPhoneToUid(user.phone); }catch(err){ console.error(err); showBanner(explainFirebaseError(err)); }
+    launchApp();
+  } else { $('#onboarding').style.display = 'flex'; }
 })();
 </script>
 </body>
