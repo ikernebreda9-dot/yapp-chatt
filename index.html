@@ -300,9 +300,9 @@ function ensureAuth(){
   return new Promise(resolve=>{
     let done = false;
     const finish = () => { if(!done){ done = true; resolve(); } };
-    auth.onAuthStateChanged(u=>{
-      if(u){ myUid = u.uid; finish(); }
-      else auth.signInAnonymously().catch(err=>{ console.error('Auth error', err); showBanner(explainFirebaseError(err)); finish(); });
+    const unsub = auth.onAuthStateChanged(u=>{
+      if(u){ myUid = u.uid; unsub(); finish(); }
+      else auth.signInAnonymously().catch(err=>{ console.error('Auth error', err); showBanner(explainFirebaseError(err)); unsub(); finish(); });
     });
     setTimeout(()=>{ if(!done){ showBanner('Firebase tarda demasiado en responder. Revisa Authentication (Anónimo activado) y tu conexión.'); finish(); } }, 8000);
   });
@@ -310,9 +310,18 @@ function ensureAuth(){
 /* Ata tu número de teléfono a tu identidad de auth, una sola vez (las reglas no permiten cambiarlo luego). */
 async function bindPhoneToUid(phone){
   if(!db || !myUid) return;
-  const ref = db.collection('uids').doc(myUid);
-  const snap = await step('leer uids', ref.get());
-  if(!snap.exists) await step('crear uids', ref.set({ phone: digits(phone) }));
+  const want = digits(phone);
+  let ref = db.collection('uids').doc(myUid);
+  let snap = await step('leer uids', ref.get());
+  if(snap.exists && snap.data().phone !== want){
+    // Esta sesión estaba atada a otro número: empezamos una identidad nueva.
+    await auth.signOut();
+    const cred = await step('nueva sesión', auth.signInAnonymously());
+    myUid = cred.user.uid;
+    ref = db.collection('uids').doc(myUid);
+    snap = await step('leer uids', ref.get());
+  }
+  if(!snap.exists) await step('crear uids', ref.set({ phone: want }));
 }
 
 const COLORS = ["#ff6b57","#ffb84d","#7dd3c0","#9b8cff","#ff8fc7","#5ec8ff"];
@@ -385,7 +394,15 @@ $('#btn-finish').onclick = async () => {
     await ensureAuth();
     if(db && !myUid) throw {code:'auth/no-session'};
     await bindPhoneToUid(phone);
-    if(db) await step('crear perfil (users)', db.collection('users').doc(digits(phone)).set(user));
+    if(db){
+      try{ await db.collection('users').doc(digits(phone)).set(user); }
+      catch(e){
+        let bound = '?';
+        try{ const d = await db.collection('uids').doc(myUid).get(); bound = d.exists ? d.data().phone : '(sin doc)'; }catch(_){}
+        e.step = 'crear perfil (users) · sesión ligada a ' + bound + ' · número nuevo ' + digits(phone);
+        throw e;
+      }
+    }
     localStorage.setItem('yapp_user', JSON.stringify(user));
     launchApp();
   }catch(err){
@@ -486,7 +503,7 @@ function renderProfile(){
       renderProfile();
     });
   });
-  $('#btn-logout').onclick = () => { if(confirm('¿Cerrar sesión y borrar tus datos locales?')){ localStorage.clear(); location.reload(); } };
+  $('#btn-logout').onclick = async () => { if(confirm('¿Cerrar sesión y borrar tus datos locales?')){ try{ if(auth) await auth.signOut(); }catch(e){} localStorage.clear(); location.reload(); } };
 }
 
 /* ---------- ADD CONTACT (modal con verificación) ---------- */
