@@ -440,6 +440,31 @@
   .pk-bub.gifted{background:none;padding:2px 0 0;} .pk-bub.gifted::after{display:none;}
   .pk-bub.gifted .gift-hint{color:#7c7f8c;}
 
+  /* ===== estilos de chat tipo Instagram ===== */
+  #thread::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:-1;opacity:0;transition:opacity .6s;}
+  #thread[data-style="romantico"]::before,#thread[data-style="oceano"]::before,#thread[data-style="galaxia"]::before,#thread[data-style="algodon"]::before,#thread[data-style="lofi"]::before,#thread[data-style="aurora"]::before,#thread[data-style="retro"]::before{opacity:1;}
+  #thread[data-style="romantico"]{--tbg:radial-gradient(circle at 15% 0%,rgba(255,175,205,.6),transparent 50%),linear-gradient(170deg,#ff5d8f,#b3123f 70%,#6d0b2a);--bubble-me:#fff1f5;--bubble-them:rgba(80,5,30,.38);}
+  #thread[data-style="romantico"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Ctext x='8' y='30' font-size='20' fill='white' fill-opacity='.22'%3E%E2%99%A5%3C/text%3E%3Ctext x='56' y='78' font-size='13' fill='white' fill-opacity='.18'%3E%E2%99%A5%3C/text%3E%3C/svg%3E");background-size:90px 90px;animation:heartsup 24s linear infinite;} @keyframes heartsup{to{background-position:0 -180px;}}
+  #thread[data-style="romantico"] .me .bub{color:#b3123f;font-weight:700;} #thread[data-style="romantico"] .bub{--r:22px;}
+  #thread[data-style="oceano"]{--tbg:linear-gradient(180deg,#0a3556 0%,#0b6f95 55%,#5fd0e0 100%);--bubble-me:#0fa3c7;--bubble-them:rgba(255,255,255,.2);}
+  #thread[data-style="oceano"]::before{background-image:radial-gradient(circle at 20px 60px,rgba(255,255,255,.32) 0 4px,transparent 5px),radial-gradient(circle at 70px 20px,rgba(255,255,255,.22) 0 6px,transparent 7px),radial-gradient(circle at 110px 100px,rgba(255,255,255,.2) 0 3px,transparent 4px);background-size:130px 130px;animation:bubup 16s linear infinite;} @keyframes bubup{to{background-position:0 -260px;}}
+  #thread[data-style="galaxia"]{--tbg:radial-gradient(circle at 80% 8%,rgba(155,95,255,.55),transparent 45%),radial-gradient(circle at 8% 92%,rgba(60,120,255,.42),transparent 50%),#06051a;--bubble-me:#7c4dff;--bubble-them:rgba(255,255,255,.11);}
+  #thread[data-style="galaxia"]::before{background-image:radial-gradient(circle at 12px 14px,#fff 0 1px,transparent 1.6px),radial-gradient(circle at 60px 50px,rgba(255,255,255,.85) 0 1.3px,transparent 2px),radial-gradient(circle at 95px 92px,#cfe8ff 0 1px,transparent 1.6px);background-size:120px 120px;animation:twk 4s ease-in-out infinite alternate;} @keyframes twk{from{opacity:.45;}to{opacity:1;}}
+  #thread[data-style="algodon"]{--tbg:linear-gradient(160deg,#ffe0f0,#e4d7ff 50%,#d3f0ff);--text:#3b3560;--sub:#8a83b3;--bubble-me:#b388ff;--bubble-them:rgba(255,255,255,.88);}
+  #thread[data-style="algodon"]::before{background:radial-gradient(circle at 20% 20%,rgba(255,170,215,.55),transparent 40%),radial-gradient(circle at 82% 72%,rgba(150,205,255,.55),transparent 42%);animation:cottonf 12s ease-in-out infinite alternate;} @keyframes cottonf{to{transform:translate(4%,3%) scale(1.06);}}
+  #thread[data-style="algodon"] .me .bub{color:#fff;} #thread[data-style="algodon"] .them .bub{color:#3b3560;border-color:rgba(150,130,200,.25);}
+  #thread[data-style="lofi"]{--tbg:linear-gradient(180deg,#2a1c3b,#4b2b52 60%,#7d3f57);--bubble-me:#e8875a;--bubble-them:rgba(255,232,215,.14);font-family:'Space Mono',monospace;}
+  #thread[data-style="lofi"]::before{background:repeating-linear-gradient(0deg,rgba(255,255,255,.04) 0 1px,transparent 1px 3px);animation:scanl 10s linear infinite;} @keyframes scanl{to{background-position:0 60px;}}
+  #thread[data-style="lofi"] .bub{font-family:'Space Mono',monospace;font-size:.84rem;--r:12px;}
+  #thread[data-style="aurora"]{--tbg:linear-gradient(180deg,#03101d,#05283a);--bubble-me:#1fc08a;--bubble-them:rgba(255,255,255,.1);}
+  #thread[data-style="aurora"]::before{inset:-10%;background:radial-gradient(ellipse 70% 40% at 20% 10%,rgba(60,255,170,.42),transparent 70%),radial-gradient(ellipse 60% 40% at 85% 20%,rgba(140,90,255,.42),transparent 70%),radial-gradient(ellipse 80% 30% at 50% 0%,rgba(80,200,255,.32),transparent 70%);animation:aurm 9s ease-in-out infinite alternate;} @keyframes aurm{to{transform:translate(5%,4%) scale(1.12);}}
+  #thread[data-style="retro"]{--tbg:linear-gradient(135deg,#ff9be4,#a99bff 50%,#71e8ff);--text:#2f2560;--sub:#6b5fa8;--bubble-me:#ff4fa3;--bubble-them:rgba(255,255,255,.82);}
+  #thread[data-style="retro"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Ctext x='10' y='28' font-size='16' fill='white' fill-opacity='.7'%3E%E2%9C%A6%3C/text%3E%3Ctext x='64' y='80' font-size='11' fill='white' fill-opacity='.55'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E");background-size:100px 100px;animation:twk 3s ease-in-out infinite alternate;}
+  #thread[data-style="retro"] .me .bub{color:#fff;box-shadow:inset 0 2px 5px rgba(255,255,255,.65),0 4px 10px rgba(80,30,120,.25);} #thread[data-style="retro"] .them .bub{color:#2f2560;box-shadow:inset 0 2px 5px rgba(255,255,255,.8),0 4px 10px rgba(80,30,120,.18);} #thread[data-style="retro"] .bub{--r:22px;}
+#thread[data-style="algodon"] #minput{background:rgba(255,255,255,.8);color:#3b3560;border-color:rgba(120,100,180,.3);} #thread[data-style="algodon"] #minput::placeholder{color:#8a83b3;} #thread[data-style="algodon"] .thead-btn,#thread[data-style="algodon"] #attach{background:rgba(255,255,255,.65);color:#3b3560;border-color:rgba(120,100,180,.3);} #thread[data-style="algodon"] #emoji-btn,#thread[data-style="algodon"] #fmt-btn{color:#3b3560;} #thread[data-style="algodon"] .thead{border-bottom-color:rgba(120,100,180,.25);} #thread[data-style="algodon"] .react{background:#fff;color:#3b3560;} #thread[data-style="algodon"] .ghostb{border-color:#8a83b3;}
+#thread[data-style="retro"] #minput{background:rgba(255,255,255,.8);color:#3b3560;border-color:rgba(120,100,180,.3);} #thread[data-style="retro"] #minput::placeholder{color:#8a83b3;} #thread[data-style="retro"] .thead-btn,#thread[data-style="retro"] #attach{background:rgba(255,255,255,.65);color:#3b3560;border-color:rgba(120,100,180,.3);} #thread[data-style="retro"] #emoji-btn,#thread[data-style="retro"] #fmt-btn{color:#3b3560;} #thread[data-style="retro"] .thead{border-bottom-color:rgba(120,100,180,.25);} #thread[data-style="retro"] .react{background:#fff;color:#3b3560;} #thread[data-style="retro"] .ghostb{border-color:#8a83b3;}
+  .styles .stylecard{height:66px;font-size:.72rem;}
+
   .ghostrow{opacity:1;} .ghostb{opacity:.6;}
   .dnd-badge{position:absolute;bottom:-3px;right:-3px;border-radius:50%;background:#ed4245;border:3px solid #150d28;z-index:3;display:flex;align-items:center;justify-content:center;box-sizing:content-box;}
   .dnd-badge::after{content:'';width:55%;height:2.5px;background:#fff;border-radius:2px;}
@@ -491,7 +516,7 @@
         <button class="back" id="thread-back">←</button>
         <div class="avatar" id="thread-avatar"></div>
         <div class="thead-info"><div class="thead-name" id="thread-name"></div><div class="thead-status" id="thread-status"></div></div>
-        <button class="thead-btn" id="btn-search" title="Buscar en el chat">🔍</button><button class="thead-btn" id="btn-pulse" title="Latido">💓</button><button class="thead-btn" id="btn-style" title="Estilo del chat">✦</button>
+        <button class="thead-btn" id="btn-style" title="Ajustes del chat"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
       </div>
       <div id="pinbar"><span>📌</span><button id="pin-x" title="Quitar">✕</button></div><div id="searchbar"><input id="search-in" placeholder="Buscar en este chat" autocomplete="off"><span id="search-n">0/0</span><button id="search-up">↑</button><button id="search-dn">↓</button><button id="search-x">✕</button></div><div id="digest"><span></span><button id="digest-x">✕</button></div><div id="msgs"><div class="ghostrow" id="ghost"></div></div>
       <div id="replybar"><div class="rq"><b></b><span></span></div><button id="reply-x">✕</button></div>
@@ -569,7 +594,9 @@ const STYLES = [
   {k:'neon',n:'Neón',prev:'linear-gradient(135deg,#05010f,#ff2bd6 60%,#00ffd5)'},
   {k:'carta',n:'Carta',prev:'linear-gradient(135deg,#f4ead2,#c9b47c)'},
   {k:'atardecer',n:'Atardecer',prev:'linear-gradient(180deg,#ff8a5b,#d1478f,#2a1256)'},
-  {k:'bosque',n:'Bosque',prev:'linear-gradient(135deg,#3c8c5a,#0b1a12)'}
+  {k:'bosque',n:'Bosque',prev:'linear-gradient(135deg,#3c8c5a,#0b1a12)'},
+  {k:'romantico',n:'Romántico',prev:'linear-gradient(160deg,#ff5d8f,#8f0f34)'},{k:'oceano',n:'Océano',prev:'linear-gradient(180deg,#0a3556,#0b6f95,#5fd0e0)'},{k:'galaxia',n:'Galaxia',prev:'radial-gradient(circle at 75% 20%,#8a55ff,#06051a 70%)'},
+  {k:'algodon',n:'Algodón',prev:'linear-gradient(160deg,#ffb3dc,#cdbdff,#a9dcff)'},{k:'lofi',n:'Lo-fi',prev:'linear-gradient(180deg,#2a1c3b,#7d3f57)'},{k:'aurora',n:'Aurora',prev:'linear-gradient(180deg,#03101d,#1fc08a)'},{k:'retro',n:'Retro Y2K',prev:'linear-gradient(135deg,#ff9be4,#a99bff,#71e8ff)'}
 ];
 let prefs = Object.assign({styles:{},live:{},priority:{},hidden:{},hiddenHash:'',custom:[],focus:false,notify:false,tone:false,lock:false,quiet:{on:false,from:'23:00',to:'08:00'}}, JSON.parse(localStorage.getItem('yapp_prefs')||'{}'));
 const savePrefs = () => localStorage.setItem('yapp_prefs', JSON.stringify(prefs));
@@ -1200,7 +1227,6 @@ function runSearch(keep){
   markHits(); const n=oc.search.hits.length; $('#search-n').textContent=`${n?oc.search.i+1:0}/${n}`;
   if(!keep && n) scrollToMsg(oc.search.hits[oc.search.i]);
 }
-$('#btn-search').onclick=()=>{ if(!openChat) return; const b=$('#searchbar'); b.classList.toggle('on'); if(b.classList.contains('on')) $('#search-in').focus(); else { openChat.search.q=''; runSearch(); } };
 $('#search-x').onclick=()=>{ $('#searchbar').classList.remove('on'); $('#search-in').value=''; if(openChat){ openChat.search.q=''; runSearch(); } };
 $('#search-in').addEventListener('input',e=>{ openChat.search.q=e.target.value; runSearch(false); });
 const stepHit=d=>{ const s=openChat.search, n=s.hits.length; if(!n) return; s.i=(s.i+d+n)%n; markHits(); $('#search-n').textContent=`${s.i+1}/${n}`; scrollToMsg(s.hits[s.i]); };
@@ -1260,8 +1286,9 @@ $('#sheetbody').addEventListener('click', async e=>{
   else if(act==='g-photo'){ $('#gphoto-input').value=''; $('#gphoto-input').click(); }
   else if(act==='g-copy'){ try{ await navigator.clipboard.writeText(inviteLink(oc.chat)); toast('Enlace copiado'); }catch(_){ toast('No se pudo copiar'); } }
   else if(act==='g-share'){ const l=inviteLink(oc.chat); if(navigator.share){ navigator.share({title:oc.chat.name,text:'Únete a mi grupo en Yapp',url:l}).catch(()=>{}); } else { try{ await navigator.clipboard.writeText(l); toast('Enlace copiado'); }catch(_){} } }
-  else if(act==='hide-set'){ hideSet(); } else if(act==='theme-new'){ themeDesigner(); } else if(act==='theme-import'){ themeImport(); }
-  else if(act==='theme-save'){ themeSave(); } else if(act==='theme-share'){ themeShare(b.dataset.k); } else if(act==='theme-del'){ themeDelete(b.dataset.k); } else if(act==='theme-do-import'){ themeDoImport(); }
+  else if(act==='hide-set'){ hideSet(); } else if(act==='theme-new'){ themeDesigner(); }
+  else if(act==='theme-save'){ themeSave(); } else if(act==='theme-del'){ themeDelete(b.dataset.k); }
+  else if(act==='cs-search'){ closeSheet(); openSearch(); } else if(act==='cs-info'){ closeSheet(); groupSheet(); }
 });
 $('#sheetbody').addEventListener('input', e=>{ if(e.target.closest('.dz')) themePreview(); });
 $('#sheetbody').addEventListener('change', e=>{
@@ -1277,12 +1304,17 @@ $('#sheetbody').addEventListener('change', e=>{
 /* ---- estilo, temas y chats ocultos ---- */
 function styleSheet(){
   const id=openChat.id, es=effStyle(), cur=es.ck||es.k, cu=prefs.custom||[];
-  openSheet(`<h3>Estilo de este chat</h3><p class="lead2">${sharedOn()?'Lo veis igual los dos: lo que elijas aquí lo verá la otra persona también.':'Solo lo ves tú: la otra persona verá el suyo.'}</p>
+  openSheet(`<h3>Ajustes del chat</h3>
+    <button class="srow" data-act="cs-search"><span class="ic">🔍</span>Buscar en el chat</button>
+    <button class="srow" data-act="starred"><span class="ic">⭐</span>Mensajes destacados</button>
+    ${isGroup()?'<button class="srow" data-act="cs-info"><span class="ic">👥</span>Info del grupo</button>':''}
+    <div class="sect" style="margin-top:8px">Estilo del chat</div>
+    <p class="lead2">${sharedOn()?'Lo veis igual los dos: lo que elijas aquí lo verá la otra persona también.':'Solo lo ves tú: la otra persona verá el suyo.'}</p>
     <div class="styles">${STYLES.map(s=>`<button class="stylecard ${cur===s.k?'sel':''}" data-act="style" data-k="${s.k}" style="background:${s.prev}">${s.n}</button>`).join('')}
     ${cu.map(s=>`<button class="stylecard ${cur===s.k?'sel':''}" data-act="style" data-k="${s.k}" style="background:linear-gradient(135deg,${s.v.a},${s.v.b})">${esc(s.n)}</button>`).join('')}</div>
-    <div style="display:flex;gap:8px"><button class="btn mini" data-act="theme-new">🎨 Crear tema</button><button class="btn mini" data-act="theme-import">📥 Importar código</button></div>
-    ${cu.find(s=>s.k===cur)?`<div style="display:flex;gap:8px"><button class="btn mini" data-act="theme-share" data-k="${cur}">📤 Copiar código del tema</button><button class="btn mini" data-act="theme-del" data-k="${cur}">🗑 Eliminar</button></div>`:''}
-    <button class="srow" data-act="starred"><span class="ic">⭐</span>Ver mensajes destacados</button>
+    <button class="btn mini" data-act="theme-new">🎨 Crear tema propio</button>
+    ${cu.find(s=>s.k===cur)?`<button class="btn mini" data-act="theme-del" data-k="${cur}">🗑 Eliminar este tema</button>`:''}
+    <div class="sect" style="margin-top:8px">Este chat</div>
     <label class="trow"><span>Prioritario en modo enfoque</span><input type="checkbox" class="sw" data-act="prio" ${prefs.priority[id]?'checked':''}></label>
     <label class="trow"><span>Ocultar este chat<br><small style="color:var(--sub);font-weight:500">Desaparece de la lista; se ve con tu contraseña en el buscador</small></span><input type="checkbox" class="sw" data-act="hide" ${prefs.hidden[id]?'checked':''}></label>
     ${isGroup()?'':`<label class="trow"><span>Escritura en directo<br><small style="color:var(--sub);font-weight:500">La otra persona ve lo que tecleas, en vivo</small></span><input type="checkbox" class="sw" data-act="live" ${prefs.live[id]?'checked':''}></label>`}`);
@@ -1314,19 +1346,7 @@ function themeSave(){
   const n=$('#th-name').value.trim(); if(!n){ toast('Ponle un nombre al tema'); return; }
   const k='c_'+Date.now().toString(36); prefs.custom.push({k,n,v:themeVals()}); savePrefs(); onSheetClose=null; designerOn=false; closeSheet(); setChatStyle(k); toast('Tema guardado');
 }
-function themeCode(t){ return 'YP1.'+btoa(unescape(encodeURIComponent(JSON.stringify({n:t.n,v:t.v})))); }
-async function themeShare(k){ const t=prefs.custom.find(s=>s.k===k); if(!t) return; try{ await navigator.clipboard.writeText(themeCode(t)); toast('Código copiado: pégalo en un chat para compartirlo'); }catch(_){ openSheet(`<h3>Código del tema</h3><textarea readonly>${esc(themeCode(t))}</textarea>`); } }
 function themeDelete(k){ prefs.custom=prefs.custom.filter(s=>s.k!==k); Object.keys(prefs.styles).forEach(c=>{ if(prefs.styles[c]===k) delete prefs.styles[c]; }); savePrefs(); applyEff(); styleSheet(); }
-function themeImport(){ openSheet(`<h3>Importar tema</h3><p class="lead2">Pega el código que te ha pasado alguien (empieza por YP1.)</p><textarea id="th-code" placeholder="YP1.…"></textarea><button class="btn" data-act="theme-do-import">Importar</button>`); }
-function themeDoImport(){
-  try{
-    const raw=$('#th-code').value.trim(); if(!raw.startsWith('YP1.')) throw 0;
-    const o=JSON.parse(decodeURIComponent(escape(atob(raw.slice(4))))), v=o.v, hex=/^#[0-9a-f]{6}$/i;
-    if(!['a','b','me','them','text'].every(k=>hex.test(v[k])) || !FONTS[v.font]) throw 0;
-    const t={k:'c_'+Date.now().toString(36), n:String(o.n||'Tema').slice(0,20), v:{a:v.a,b:v.b,me:v.me,them:v.them,text:v.text,ang:Math.max(0,Math.min(360,Number(v.ang)||0)),r:Math.max(4,Math.min(28,Number(v.r)||16)),font:v.font}};
-    prefs.custom.push(t); savePrefs(); closeSheet(); setChatStyle(t.k); toast('Tema importado: '+t.n);
-  }catch(_){ toast('Ese código no es válido'); }
-}
 
 /* ---- grupos ---- */
 function groupSheet(){
@@ -1397,7 +1417,6 @@ function sendMessage(extra, id){
   return p;
 }
 function sendPulse(){ if(!openChat||!openChat.chat) return; sendMessage({type:'pulse', mode:isGroup()?'day':'burn'}); burst('💓'); if(navigator.vibrate) navigator.vibrate(60); }
-$('#btn-pulse').onclick=sendPulse;
 
 /* ---- adjuntos ---- */
 $('#attach').onclick=()=>{ if(!openChat||!openChat.chat) return; const g=isGroup();
@@ -1405,6 +1424,7 @@ $('#attach').onclick=()=>{ if(!openChat||!openChat.chat) return; const g=isGroup
     <button class="srow" data-act="attach" data-k="photo"><span class="ic">📷</span><span>Foto</span></button>
     <button class="srow" data-act="attach" data-k="stickers"><span class="ic">🩷</span><span>Stickers<small>Crea los tuyos con tus fotos</small></span></button>
     <button class="srow" data-act="attach" data-k="gif"><span class="ic">🖼</span><span>GIF<small>Desde tu dispositivo (hasta ~800 KB)</small></span></button>
+    <button class="srow" data-act="attach" data-k="pulse"><span class="ic">💓</span><span>Latido<small>Un toque sin texto que hace vibrar su móvil</small></span></button>
     <button class="srow" data-act="attach" data-k="challenge"><span class="ic">🎯</span><span>Reto del día<small>Una pregunta; las respuestas se revelan cuando todos contestan</small></span></button>
     <button class="srow" data-act="attach" data-k="loc"><span class="ic">📍</span><span>Ubicación en directo<small>15 minutos, con Yapp abierto</small></span></button>
     <button class="srow" data-act="attach" data-k="plan"><span class="ic">📊</span><span>Plan con votación<small>¿Quedamos? Que decidan todos</small></span></button>
@@ -1416,7 +1436,7 @@ function attachAction(k){
   if(k==='photo'){ photoTogether=false; closeSheet(); $('#photo-input').value=''; $('#photo-input').click(); }
   else if(k==='gif'){ closeSheet(); $('#gif-input').value=''; $('#gif-input').click(); }
   else if(k==='stickers'){ stickerPanel(); }
-  else if(k==='challenge'){ closeSheet(); openChallenge(); }
+  else if(k==='challenge'){ closeSheet(); openChallenge(); } else if(k==='pulse'){ closeSheet(); sendPulse(); }
   else if(k==='loc'){ closeSheet(); shareLocation(); }
   else if(k==='day'||k==='burn'){ compose.mode=k; closeSheet(); renderComposeBars(); inputEl.focus(); }
   else if(k==='plan'){ openSheet(`<h3>Nuevo plan</h3><p class="lead2">Escribe la pregunta y hasta 4 opciones.</p><input class="field" id="pl-t" placeholder="¿Quedamos el sábado?" maxlength="60">${[1,2,3,4].map(i=>`<input class="field pl-o" placeholder="Opción ${i}${i>2?' (opcional)':''}" maxlength="40">`).join('')}<button class="btn" data-act="submit-plan">Enviar plan</button>`); }
@@ -2009,6 +2029,7 @@ function fxEcho(text){
   for(let i=0;i<46;i++){ const s=document.createElement('span'), sc=.35+Math.random()*2.4; s.textContent=t; s.style.cssText=`left:${Math.random()*Math.max(10,W-90)-30}px;top:${Math.random()*(H-40)}px;font-size:${(.7*sc).toFixed(2)}rem;animation-delay:${(Math.random()*1200)|0}ms;--dx:${((Math.random()-.5)*60)|0}px;--dy:${((Math.random()-.5)*60)|0}px`; box.appendChild(s); }
   document.body.appendChild(box); setTimeout(()=>box.remove(),4600);
 }
+function openSearch(){ if(!openChat) return; $('#searchbar').classList.add('on'); $('#search-in').focus(); }
 
 /* =============== ARRANQUE =============== */
 (async () => {
