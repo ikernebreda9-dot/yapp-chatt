@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Yapp</title>
+<link rel="icon" type="image/png" href="yappimg.png">
+<link rel="apple-touch-icon" href="yappimg.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Fraunces:ital,opsz@1,20&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<link rel="icon" type="image/png" href="yappicon.png">
-<link rel="apple-touch-icon" href="yappicon.png">
 <style>
   :root{
     --glass:rgba(255,255,255,.14); --glass-strong:rgba(255,255,255,.22); --line:rgba(255,255,255,.35);
@@ -153,6 +153,19 @@
   #viewer-name{margin-top:16px; font-weight:700; font-size:1.1rem;}
   #viewer-close{position:absolute; top:30px; right:30px; color:#fff; font-size:1.6rem; background:none; border:none; cursor:pointer;}
 
+  /* add-contact modal */
+  #addbackdrop{position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:flex-end; justify-content:center; z-index:60; backdrop-filter:blur(6px);}
+  #addbackdrop.open{display:flex;}
+  #addmodal{width:100%; max-width:420px; border-radius:28px 28px 0 0; padding:26px 24px 30px; animation:slideup .3s cubic-bezier(.2,.8,.2,1);}
+  @keyframes slideup{from{transform:translateY(30px); opacity:0;} to{transform:translateY(0); opacity:1;}}
+  #addmodal h3{font-family:'Fraunces',serif; font-style:italic; font-weight:400; font-size:1.3rem; margin:0 0 4px;}
+  #addmodal .lead2{color:var(--sub); font-size:.85rem; margin:0 0 18px;}
+  #add-error{color:#ff8a8a; font-size:.82rem; margin:-6px 0 14px; min-height:1em;}
+  #add-actions{display:flex; gap:10px; margin-top:4px;}
+  #add-actions .btn{background:rgba(255,255,255,.14); box-shadow:none; color:var(--text);}
+  #add-actions .btn.primary{background:var(--accent); color:#fff; box-shadow:0 8px 20px rgba(255,122,89,.35);}
+  #add-spinner{display:none; text-align:center; color:var(--sub); font-size:.85rem; padding:6px 0 2px;}
+
   ::-webkit-scrollbar{width:0;}
 </style>
 </head>
@@ -225,32 +238,31 @@
   <div><div id="viewer-pic"></div><div id="viewer-name"></div></div>
 </div>
 
+<div id="addbackdrop">
+  <div id="addmodal" class="glass">
+    <h3>Nuevo chat</h3>
+    <p class="lead2">Solo puedes hablar con gente que ya tenga cuenta en Yapp.</p>
+    <input class="field glass" id="add-name" placeholder="Nombre" maxlength="24">
+    <div class="row-cc"><input class="field glass" id="add-cc" value="+34" maxlength="4"><input class="field glass" id="add-phone" placeholder="Su teléfono" inputmode="numeric"></div>
+    <div id="add-error"></div>
+    <div id="add-spinner">Buscando…</div>
+    <div id="add-actions">
+      <button class="btn" id="add-cancel">Cancelar</button>
+      <button class="btn primary" id="add-confirm">Buscar y añadir</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* =============== CONFIG: pega aquí tu firebaseConfig de la consola de Firebase =============== */
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyAySr57QVrZjnQgNOQu9af9NXB-feKUung",
   authDomain: "yapp-9f1b3.firebaseapp.com",
-  databaseURL: "https://yapp-9f1b3-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "yapp-9f1b3",
   storageBucket: "yapp-9f1b3.firebasestorage.app",
   messagingSenderId: "1083478912472",
-  appId: "1:1083478912472:web:bd9f79a0ae3b9b445016ad",
-  measurementId: "G-V20C1QMT2C"
+  appId: "1:1083478912472:web:bd9f79a0ae3b9b445016ad"
 };
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
-
 let db = null, auth = null, offline = true, myUid = null;
 try{
   if(firebaseConfig.apiKey !== "YOUR_API_KEY"){
@@ -444,23 +456,50 @@ function renderProfile(){
   $('#btn-logout').onclick = () => { if(confirm('¿Cerrar sesión y borrar tus datos locales?')){ localStorage.clear(); location.reload(); } };
 }
 
-/* ---------- ADD CONTACT ---------- */
-$('#fab-add').onclick = async () => {
-  const name = prompt('Nombre del contacto:'); if(!name) return;
-  const phoneRaw = prompt('Su número de teléfono:'); if(!phoneRaw) return;
+/* ---------- ADD CONTACT (modal con verificación) ---------- */
+function openAddModal(){
+  $('#add-name').value = ''; $('#add-phone').value = ''; $('#add-error').textContent = '';
+  $('#add-spinner').style.display = 'none';
+  $('#addbackdrop').classList.add('open');
+  $('#add-name').focus();
+}
+function closeAddModal(){ $('#addbackdrop').classList.remove('open'); }
+$('#fab-add').onclick = openAddModal;
+$('#add-cancel').onclick = closeAddModal;
+$('#addbackdrop').addEventListener('click', e => { if(e.target.id === 'addbackdrop') closeAddModal(); });
+
+$('#add-confirm').onclick = async () => {
+  const name = $('#add-name').value.trim();
+  const phoneRaw = $('#add-cc').value + ' ' + $('#add-phone').value.trim();
   const otherPhone = digits(phoneRaw);
-  if(db){
-    const chatId = [digits(user.phone), otherPhone].sort().join('_');
+  const errEl = $('#add-error');
+  errEl.textContent = '';
+
+  if(!name){ errEl.textContent = 'Ponle un nombre.'; return; }
+  if(otherPhone.length < 8){ errEl.textContent = 'Ese número no parece válido.'; return; }
+  if(otherPhone === digits(user.phone)){ errEl.textContent = 'Ese es tu propio número.'; return; }
+  if(!db){ errEl.textContent = 'Configura Firebase primero para poder añadir gente real.'; return; }
+
+  $('#add-spinner').style.display = 'block';
+  $('#add-confirm').disabled = true;
+  try{
     const otherDoc = await db.collection('users').doc(otherPhone).get();
+    if(!otherDoc.exists){
+      errEl.textContent = 'No hay ningún usuario de Yapp con ese número.';
+      return;
+    }
+    const chatId = [digits(user.phone), otherPhone].sort().join('_');
     await db.collection('chats').doc(chatId).set({
       participants: [digits(user.phone), otherPhone], lastMessage: '', lastTs: firebase.firestore.FieldValue.serverTimestamp()
     }, {merge:true});
+    closeAddModal();
     openThread(chatId, otherPhone, true);
-  } else {
-    const c = { id: Date.now().toString(), name, phone: otherPhone, color: COLORS[Math.floor(Math.random()*COLORS.length)], photo:null, messages: [], lastTs: Date.now(), registered:false };
-    localChats.push(c);
-    localStorage.setItem('yapp_local_chats', JSON.stringify(localChats));
-    renderChats();
+  } catch(e){
+    console.error(e);
+    errEl.textContent = 'No se pudo comprobar el número. Inténtalo de nuevo.';
+  } finally {
+    $('#add-spinner').style.display = 'none';
+    $('#add-confirm').disabled = false;
   }
 };
 
