@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Yapp</title>
-<script>try{if(localStorage.getItem("yapp_user")){var _r=document.documentElement.classList;_r.add("has-user");var _p=JSON.parse(localStorage.getItem("yapp_prefs")||"{}");if(_p.lock&&localStorage.getItem("yapp_cred"))_r.add("locked");}}catch(e){}</script>
+<script>try{if(localStorage.getItem("yapp_user")){var _r=document.documentElement.classList;_r.add("has-user");var _p=JSON.parse(localStorage.getItem("yapp_prefs")||"{}");if(_p.lock&&localStorage.getItem("yapp_cred"))_r.add("locked");} document.documentElement.dataset.appbg=(JSON.parse(localStorage.getItem("yapp_prefs")||"{}").appBg)||"aurora";}catch(e){}</script>
 <link rel="icon" type="image/png" href="yappimg.png">
 <link rel="apple-touch-icon" href="yappimg.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -464,6 +464,33 @@
 #thread[data-style="algodon"] #minput{background:rgba(255,255,255,.8);color:#3b3560;border-color:rgba(120,100,180,.3);} #thread[data-style="algodon"] #minput::placeholder{color:#8a83b3;} #thread[data-style="algodon"] .thead-btn,#thread[data-style="algodon"] #attach{background:rgba(255,255,255,.65);color:#3b3560;border-color:rgba(120,100,180,.3);} #thread[data-style="algodon"] #emoji-btn,#thread[data-style="algodon"] #fmt-btn{color:#3b3560;} #thread[data-style="algodon"] .thead{border-bottom-color:rgba(120,100,180,.25);} #thread[data-style="algodon"] .react{background:#fff;color:#3b3560;} #thread[data-style="algodon"] .ghostb{border-color:#8a83b3;}
 #thread[data-style="retro"] #minput{background:rgba(255,255,255,.8);color:#3b3560;border-color:rgba(120,100,180,.3);} #thread[data-style="retro"] #minput::placeholder{color:#8a83b3;} #thread[data-style="retro"] .thead-btn,#thread[data-style="retro"] #attach{background:rgba(255,255,255,.65);color:#3b3560;border-color:rgba(120,100,180,.3);} #thread[data-style="retro"] #emoji-btn,#thread[data-style="retro"] #fmt-btn{color:#3b3560;} #thread[data-style="retro"] .thead{border-bottom-color:rgba(120,100,180,.25);} #thread[data-style="retro"] .react{background:#fff;color:#3b3560;} #thread[data-style="retro"] .ghostb{border-color:#8a83b3;}
   .styles .stylecard{height:66px;font-size:.72rem;}
+  #btn-personalize{margin-bottom:18px;}
+  #pcard-wrap2{margin-bottom:16px;}
+  /* estilo Simple, tipo WhatsApp */
+  #thread[data-style="simple"]{--tbg:#e9edf1; --text:#1c1c1e; --sub:#6b6f76; --bubble-me:#dcf3d0; --bubble-them:#ffffff;}
+  #thread[data-style="simple"] .bub{--r:9px; box-shadow:0 1px 1px rgba(0,0,0,.08); backdrop-filter:none; border:none;}
+  #thread[data-style="simple"] .me .bub{color:#111;} #thread[data-style="simple"] .them .bub{color:#111;}
+  #thread[data-style="simple"] .glass,#thread[data-style="simple"] #minput,#thread[data-style="simple"] .thead-btn,#thread[data-style="simple"] #attach{background:#fff;color:#1c1c1e;border-color:rgba(0,0,0,.1);}
+  #thread[data-style="simple"] #minput::placeholder{color:#8a8d94;}
+  #thread[data-style="simple"] #emoji-btn,#thread[data-style="simple"] #fmt-btn{color:#1c1c1e;}
+  #thread[data-style="simple"] .thead{border-bottom-color:rgba(0,0,0,.08);}
+  #thread[data-style="simple"] .react{background:#fff;color:#1c1c1e;box-shadow:0 1px 2px rgba(0,0,0,.15);}
+  #thread[data-style="simple"] .ghostb{border-color:#8a8d94;}
+  #thread[data-style="simple"] .tsep b,#thread[data-style="simple"] .tsep{color:#6b6f76;}
+  #thread[data-style="simple"] .rcpt{color:#6b6f76;}
+
+  /* ===== fondo de la app fuera del chat ===== */
+  html[data-appbg="calm"] #bg{filter:saturate(.5) brightness(.85);}
+  html[data-appbg="calm"] .blob{animation-duration:50s;}
+  html[data-appbg="calm"] .b3{opacity:.4;}
+  html[data-appbg="solid"] .blob{display:none;}
+  html[data-appbg="solid"] #bg{background:linear-gradient(165deg,#1b1428 0%,#0b0620 55%,#0a0518 100%);}
+  html[data-appbg="mist"] .blob{display:none;}
+  html[data-appbg="mist"] #bg{background:radial-gradient(ellipse 90% 60% at 50% -10%,#2a2140,#0b0620 65%);}
+  .appbg-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:6px;}
+  .appbg-opt{border-radius:14px;height:56px;border:2px solid transparent;cursor:pointer;padding:0;position:relative;overflow:hidden;}
+  .appbg-opt.sel{border-color:#fff;}
+  .appbg-opt span{position:absolute;bottom:3px;left:0;right:0;font-size:.6rem;font-weight:800;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6);}
 
   .ghostrow{opacity:1;} .ghostb{opacity:.6;}
   .dnd-badge{position:absolute;bottom:-3px;right:-3px;border-radius:50%;background:#ed4245;border:3px solid #150d28;z-index:3;display:flex;align-items:center;justify-content:center;box-sizing:content-box;}
@@ -596,9 +623,10 @@ const STYLES = [
   {k:'atardecer',n:'Atardecer',prev:'linear-gradient(180deg,#ff8a5b,#d1478f,#2a1256)'},
   {k:'bosque',n:'Bosque',prev:'linear-gradient(135deg,#3c8c5a,#0b1a12)'},
   {k:'romantico',n:'Romántico',prev:'linear-gradient(160deg,#ff5d8f,#8f0f34)'},{k:'oceano',n:'Océano',prev:'linear-gradient(180deg,#0a3556,#0b6f95,#5fd0e0)'},{k:'galaxia',n:'Galaxia',prev:'radial-gradient(circle at 75% 20%,#8a55ff,#06051a 70%)'},
-  {k:'algodon',n:'Algodón',prev:'linear-gradient(160deg,#ffb3dc,#cdbdff,#a9dcff)'},{k:'lofi',n:'Lo-fi',prev:'linear-gradient(180deg,#2a1c3b,#7d3f57)'},{k:'aurora',n:'Aurora',prev:'linear-gradient(180deg,#03101d,#1fc08a)'},{k:'retro',n:'Retro Y2K',prev:'linear-gradient(135deg,#ff9be4,#a99bff,#71e8ff)'}
+  {k:'algodon',n:'Algodón',prev:'linear-gradient(160deg,#ffb3dc,#cdbdff,#a9dcff)'},{k:'lofi',n:'Lo-fi',prev:'linear-gradient(180deg,#2a1c3b,#7d3f57)'},{k:'aurora',n:'Aurora',prev:'linear-gradient(180deg,#03101d,#1fc08a)'},{k:'retro',n:'Retro Y2K',prev:'linear-gradient(135deg,#ff9be4,#a99bff,#71e8ff)'},
+  {k:'simple',n:'Simple',prev:'linear-gradient(160deg,#e9edf1,#d7e6da)'}
 ];
-let prefs = Object.assign({styles:{},live:{},priority:{},hidden:{},hiddenHash:'',custom:[],focus:false,notify:false,tone:false,lock:false,quiet:{on:false,from:'23:00',to:'08:00'}}, JSON.parse(localStorage.getItem('yapp_prefs')||'{}'));
+let prefs = Object.assign({styles:{},live:{},priority:{},hidden:{},hiddenHash:'',custom:[],focus:false,notify:false,tone:false,lock:false,appBg:'aurora',quiet:{on:false,from:'23:00',to:'08:00'}}, JSON.parse(localStorage.getItem('yapp_prefs')||'{}'));
 const savePrefs = () => localStorage.setItem('yapp_prefs', JSON.stringify(prefs));
 
 function toast(msg, ms){ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('on'), ms||3200); }
@@ -1008,6 +1036,8 @@ function setChatStyle(k){
   }
   applyEff();
 }
+function applyAppBg(){ document.documentElement.dataset.appbg = prefs.appBg||'aurora'; }
+applyAppBg();
 const FONTS={'Manrope':"'Manrope',sans-serif",'Fraunces':"'Fraunces',serif",'Caveat':"'Caveat',cursive",'Space Mono':"'Space Mono',monospace"};
 const lum=hex=>{ const n=parseInt(hex.slice(1),16); return (0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255; };
 function setThemeVars(th,v){
@@ -1614,15 +1644,29 @@ function regroup(){
 }
 
 /* ---------- menú contextual con desenfoque y tapbacks ---------- */
+const ICONS={
+  reply:'<path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 6 6v3"/>',
+  thread:'<path d="M4 5h16v11H9l-5 4V5z"/>',
+  fwd:'<path d="M15 4 20 9l-5 5"/><path d="M20 9H10a6 6 0 0 0-6 6v3"/>',
+  copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+  pin:'<path d="M12 2v6"/><path d="M7 9h10l-1.5 5H8.5z"/><path d="M12 14v8"/>',
+  unpin:'<path d="M12 2v6"/><path d="M7 9h10l-1.5 5H8.5z"/><path d="M12 14v8"/><path d="M4 4l16 16" stroke-width="1.6"/>',
+  star:'<path d="M12 3l2.8 5.9 6.2.7-4.6 4.4 1.2 6.2L12 17l-5.6 3.2 1.2-6.2-4.6-4.4 6.2-.7z"/>',
+  starOff:'<path d="M12 3l2.8 5.9 6.2.7-4.6 4.4 1.2 6.2L12 17l-5.6 3.2 1.2-6.2-4.6-4.4 6.2-.7z" fill="currentColor" fill-opacity=".9"/>',
+  replay:'<path d="M4 4v5h5"/><path d="M4.5 9a8 8 0 1 1 1.8 8.4"/>',
+  edit:'<path d="M4 20h4L18 10l-4-4L4 16z"/><path d="M13 7l4 4"/>',
+  trash:'<path d="M5 7h14"/><path d="M9 7V4h6v3"/><path d="M7 7l1 13h8l1-13"/>'
+};
+const svgIc=(k,extra)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:19px;height:19px">${ICONS[k]}</svg>${extra||''}`;
 function ctxItems(m,mine){
   const c=openChat.chat, pinned=c&&c.pinned&&c.pinned.id===m.id, starred=!!(m.stars&&m.stars[myD]), it=[];
-  it.push(['reply','Responder','↩︎']); if(!m.threadOf) it.push(['thread','Responder en hilo','💬']);
-  if((!m.type||['text','image','audio','sticker'].includes(m.type))&&!m.deliverAt) it.push(['fwd-pick','Reenviar','↪︎']);
-  if(!m.type||m.type==='text') it.push(['copy','Copiar','⧉']);
-  it.push(['pin',pinned?'Desfijar':'Fijar','📌']); it.push(['star',starred?'Quitar destacado':'Destacar','⭐']);
-  if(m.sfx||m.bfx) it.push(['replay','Repetir efecto','✨']);
-  if(mine&&(!m.type||m.type==='text')&&!m.deliverAt) it.push(['edit','Editar','✎']);
-  it.push(['delme','Eliminar para mí','🗑',1]); if(mine) it.push(['del','Eliminar para todos','🗑',1]);
+  it.push(['reply','Responder',svgIc('reply')]); if(!m.threadOf) it.push(['thread','Responder en hilo',svgIc('thread')]);
+  if((!m.type||['text','image','audio','sticker'].includes(m.type))&&!m.deliverAt) it.push(['fwd-pick','Reenviar',svgIc('fwd')]);
+  if(!m.type||m.type==='text') it.push(['copy','Copiar',svgIc('copy')]);
+  it.push(['pin',pinned?'Desfijar':'Fijar',svgIc(pinned?'unpin':'pin')]); it.push(['star',starred?'Quitar destacado':'Destacar',svgIc(starred?'starOff':'star')]);
+  if(m.sfx||m.bfx) it.push(['replay','Repetir efecto',svgIc('replay')]);
+  if(mine&&(!m.type||m.type==='text')&&!m.deliverAt) it.push(['edit','Editar',svgIc('edit')]);
+  it.push(['delme','Eliminar para mí',svgIc('trash'),1]); if(mine) it.push(['del','Eliminar para todos',svgIc('trash'),1]);
   return it;
 }
 function closeCtx(){ const c=$('#ctx'); if(!c.classList.contains('on')) return; c.classList.remove('on'); c.innerHTML=''; ctxOpen=null; }
@@ -1864,17 +1908,65 @@ function profileSheet(phone){
 let pfT=null;
 function pfSet(patch){
   const cur=user.prof||{}, nx=Object.assign({},cur,patch); if(patch.banner) nx.banner=Object.assign({},cur.banner||{},patch.banner);
-  user.prof=nx; localStorage.setItem('yapp_user',JSON.stringify(user)); refreshPcard();
+  user.prof=nx; localStorage.setItem('yapp_user',JSON.stringify(user)); refreshPcard(); const pv2=$('#pcard-wrap2'); if(pv2) pv2.innerHTML=profileCardHTML(user,{});
   clearTimeout(pfT); pfT=setTimeout(()=>db.collection('users').doc(myD).set({prof:user.prof},{merge:true}).catch(e=>showBanner(explainFirebaseError(e))),600);
 }
 function refreshPcard(){ const w=$('#pcard-wrap'); if(w){ w.innerHTML=profileCardHTML(user,{me:true}); const c=$('#pcam'); if(c) c.onclick=()=>$('#my-pic-input').click(); } }
 const chipRow=(name,opts,cur)=>`<div class="chips2">${opts.map(([k,l])=>`<button class="c2 ${cur===k?'sel':''}" data-pf="${name}" data-v="${k}">${l}</button>`).join('')}</div>`;
 function renderProfile(){
   updateNavAvatar();
-  const P=profOf(user), q=prefs.quiet, custom=P.mode==='custom', raw=user.prof||{}, links=(raw.links||[]).concat([{},{},{}]).slice(0,3);
+  const q=prefs.quiet;
   $('#view-profile').innerHTML=`
+    <div id="pcard-wrap"></div><input type="file" id="my-pic-input" accept="image/*" style="display:none">
+    <button class="btn mini" id="btn-personalize">✨ Personalizar tarjeta de perfil</button>
+    <div class="sect">Estado de 24 h</div>
+    <button class="btn mini" id="btn-status">${activeStatus(user)?'Ver o cambiar mi estado de 24 h':'✨ Publicar un estado de 24 h'}</button>
+    <div class="plist glass">
+      <label class="prow"><span>No molestar<small>Un icono rojo en tu foto y sin avisos mientras esté activo</small></span><input type="checkbox" class="sw" id="opt-dnd" ${user.dnd?'checked':''}></label>
+      <label class="prow"><span>Mostrar "en línea" y "últ. vez"<small>Si lo apagas, tampoco verás el de los demás</small></span><input type="checkbox" class="sw" id="opt-seen" ${user.hideSeen?'':'checked'}></label>
+      <label class="prow"><span>Estilo de chat compartido<small>Los dos veis el estilo que elija cualquiera. Apagado: cada uno ve el suyo</small></span><input type="checkbox" class="sw" id="opt-shared" ${sharedOn()?'checked':''}></label>
+      <div class="prow col"><span>Fondo de la app</span><div class="appbg-opts">
+        <button class="appbg-opt ${(prefs.appBg||'aurora')==='aurora'?'sel':''}" data-appbg="aurora" style="background:linear-gradient(135deg,#ff6b9d,#5b7bff,#ffb84d)"><span>Vivo</span></button>
+        <button class="appbg-opt ${prefs.appBg==='calm'?'sel':''}" data-appbg="calm" style="background:linear-gradient(135deg,#5b4a86,#2c2450)"><span>Suave</span></button>
+        <button class="appbg-opt ${prefs.appBg==='mist'?'sel':''}" data-appbg="mist" style="background:radial-gradient(ellipse at 50% 0%,#2a2140,#0b0620)"><span>Bruma</span></button>
+        <button class="appbg-opt ${prefs.appBg==='solid'?'sel':''}" data-appbg="solid" style="background:linear-gradient(165deg,#1b1428,#0a0518)"><span>Sólido</span></button>
+      </div></div>
+      <label class="prow"><span>Modo enfoque<small>Solo los chats prioritarios te avisan y salen arriba</small></span><input type="checkbox" class="sw" id="opt-focus" ${prefs.focus?'checked':''}></label>
+      <label class="prow"><span>Avisos del navegador<small>Cuando llegue un mensaje con Yapp en segundo plano</small></span><input type="checkbox" class="sw" id="opt-notify" ${prefs.notify?'checked':''}></label>
+      <label class="prow"><span>Modo tranquilo<small>Sin avisos ni ruido en estas horas</small></span><input type="checkbox" class="sw" id="opt-quiet" ${q.on?'checked':''}></label>
+      <div class="prow" id="quiet-times" style="${q.on?'':'display:none'}"><span>De / a</span><span class="timerow"><input type="time" id="q-from" value="${q.from}"><input type="time" id="q-to" value="${q.to}"></span></div>
+      <label class="prow"><span>Tono inteligente<small>Te avisa antes de enviar algo muy brusco</small></span><input type="checkbox" class="sw" id="opt-tone" ${prefs.tone?'checked':''}></label>
+      <label class="prow"><span>Bloqueo con Face ID / huella<small>Pide desbloquear al abrir Yapp</small></span><input type="checkbox" class="sw" id="opt-lock" ${prefs.lock?'checked':''}></label>
+    </div>
+    <div class="plist glass"><div class="prow"><span>Número</span><span>${esc(user.phone)}</span></div></div>
+    <div class="plist glass"><div class="prow danger" id="btn-logout">Cerrar sesión</div></div>`;
+  refreshPcard();
+  $('#my-pic-input').addEventListener('change', e=>{ const f=e.target.files[0]; if(!f) return;
+    imgToDataURL(f,{max:200,square:true,q:.82}, async u=>{ user.photo=u; localStorage.setItem('yapp_user',JSON.stringify(user)); try{ await db.collection('users').doc(myD).set({photo:u},{merge:true}); }catch(err){ showBanner(explainFirebaseError(err)); } refreshPcard(); updateNavAvatar(); }); });
+  $('#btn-personalize').onclick=personalizeSheet;
+  $('#opt-dnd').onchange=async e=>{ user.dnd=e.target.checked; localStorage.setItem('yapp_user',JSON.stringify(user)); try{ await db.collection('users').doc(myD).set({dnd:user.dnd},{merge:true}); }catch(err){ showBanner(explainFirebaseError(err)); } refreshPcard(); toast(user.dnd?'No molestar activado':'No molestar desactivado'); };
+  $('#opt-seen').onchange=e=>{ user.hideSeen=!e.target.checked; localStorage.setItem('yapp_user',JSON.stringify(user)); db.collection('users').doc(myD).set({hideSeen:user.hideSeen},{merge:true}).catch(()=>{}); touchSeen(); };
+  $('#opt-shared').onchange=e=>{ prefs.sharedStyle=e.target.checked; savePrefs(); if(openChat) applyEff(); toast(prefs.sharedStyle?'Estilo compartido: los dos veis el mismo':'Cada uno ve su propio estilo'); };
+  $('#btn-status').onclick=()=>{ activeStatus(user)?openStatus(myD):statusSheet(); };
+  $$('.appbg-opt').forEach(b=>b.onclick=()=>{ prefs.appBg=b.dataset.appbg; savePrefs(); applyAppBg(); renderProfile(); });
+  $('#opt-focus').onchange=e=>{ prefs.focus=e.target.checked; savePrefs(); schedulePaint(); toast(prefs.focus?'Modo enfoque activado: marca chats como prioritarios desde ✦':'Modo enfoque desactivado'); };
+  $('#opt-notify').onchange=async e=>{ if(!e.target.checked){ prefs.notify=false; savePrefs(); return; } if(!('Notification' in window)){ toast('Este navegador no admite avisos'); e.target.checked=false; return; }
+    const p=await Notification.requestPermission(); prefs.notify=p==='granted'; e.target.checked=prefs.notify; savePrefs(); if(!prefs.notify) toast('Permiso denegado en el navegador'); };
+  $('#opt-quiet').onchange=e=>{ prefs.quiet.on=e.target.checked; savePrefs(); $('#quiet-times').style.display=prefs.quiet.on?'':'none'; };
+  $('#q-from').onchange=e=>{ prefs.quiet.from=e.target.value||'23:00'; savePrefs(); }; $('#q-to').onchange=e=>{ prefs.quiet.to=e.target.value||'08:00'; savePrefs(); };
+  $('#opt-tone').onchange=e=>{ prefs.tone=e.target.checked; savePrefs(); };
+  $('#opt-lock').onchange=async e=>{ if(e.target.checked){ const ok=await enableLock(); if(!ok){ e.target.checked=false; toast('Tu dispositivo no permite el bloqueo biométrico aquí'); } else toast('Bloqueo activado'); } else { prefs.lock=false; savePrefs(); localStorage.removeItem('yapp_cred'); } };
+  $('#btn-logout').onclick=async()=>{ if(confirm('¿Cerrar sesión y borrar tus datos locales?')){ try{ if(auth) await auth.signOut(); }catch(e){} localStorage.clear(); location.reload(); } };
+}
+
+/* ---------- hoja: personalizar tarjeta de perfil ---------- */
+function personalizeSheet(){
+  const root=$('#sheetbody'), P=profOf(user), custom=P.mode==='custom', raw=user.prof||{}, links=(raw.links||[]).concat([{},{},{}]).slice(0,3);
+  const scroll=root.closest('.sheet')?root.closest('.sheet').scrollTop:0;
+  root.innerHTML=`
+    <h3>Personalizar tarjeta</h3><p class="lead2">Así te verán los demás.</p>
+    <div id="pcard-wrap2"></div>
     <div class="seg"><button data-pm="simple" class="${!custom?'on':''}">Simple</button><button data-pm="custom" class="${custom?'on':''}">Personalizado ✨</button></div>
-    <div id="pcard-wrap"></div><input type="file" id="my-pic-input" accept="image/*" style="display:none"><input type="file" id="banner-input" accept="image/*" style="display:none">
     <div class="sect">Lo básico</div>
     <div class="plist glass">
       <div class="prow col"><span>Nombre</span><input class="pin-in" id="pf-name" value="${esc(user.name)}" maxlength="24"></div>
@@ -1895,50 +1987,21 @@ function renderProfile(){
       <div class="prow col"><span>Insignias (hasta 3)</span><div class="chips2">${BADGES.map(b=>`<button class="c2 ${P.badges.includes(b)?'sel':''}" data-badge="${b}">${b}</button>`).join('')}</div></div>
       <div class="prow col"><span>Ahora suena</span><input class="pin-in" id="pf-song" maxlength="60" value="${esc(P.song)}" placeholder="Canción – Artista"></div>
       <div class="prow col"><span>Enlaces (hasta 3)</span>${links.map((l,i)=>`<div class="row2"><input class="pin-in pf-ll" data-i="${i}" placeholder="Nombre" maxlength="24" value="${esc(l.label||'')}"><input class="pin-in pf-lu" data-i="${i}" placeholder="https://…" maxlength="200" value="${esc(l.url||'')}"></div>`).join('')}</div>
-    </div>`:''}
-    <div class="sect">Estado de 24 h</div>
-    <button class="btn mini" id="btn-status">${activeStatus(user)?'Ver o cambiar mi estado de 24 h':'✨ Publicar un estado de 24 h'}</button>
-    <div class="plist glass">
-      <label class="prow"><span>No molestar<small>Un icono rojo en tu foto y sin avisos mientras esté activo</small></span><input type="checkbox" class="sw" id="opt-dnd" ${user.dnd?'checked':''}></label>
-      <label class="prow"><span>Mostrar "en línea" y "últ. vez"<small>Si lo apagas, tampoco verás el de los demás</small></span><input type="checkbox" class="sw" id="opt-seen" ${user.hideSeen?'':'checked'}></label>
-      <label class="prow"><span>Estilo de chat compartido<small>Los dos veis el estilo que elija cualquiera. Apagado: cada uno ve el suyo</small></span><input type="checkbox" class="sw" id="opt-shared" ${sharedOn()?'checked':''}></label>
-      <label class="prow"><span>Modo enfoque<small>Solo los chats prioritarios te avisan y salen arriba</small></span><input type="checkbox" class="sw" id="opt-focus" ${prefs.focus?'checked':''}></label>
-      <label class="prow"><span>Avisos del navegador<small>Cuando llegue un mensaje con Yapp en segundo plano</small></span><input type="checkbox" class="sw" id="opt-notify" ${prefs.notify?'checked':''}></label>
-      <label class="prow"><span>Modo tranquilo<small>Sin avisos ni ruido en estas horas</small></span><input type="checkbox" class="sw" id="opt-quiet" ${q.on?'checked':''}></label>
-      <div class="prow" id="quiet-times" style="${q.on?'':'display:none'}"><span>De / a</span><span class="timerow"><input type="time" id="q-from" value="${q.from}"><input type="time" id="q-to" value="${q.to}"></span></div>
-      <label class="prow"><span>Tono inteligente<small>Te avisa antes de enviar algo muy brusco</small></span><input type="checkbox" class="sw" id="opt-tone" ${prefs.tone?'checked':''}></label>
-      <label class="prow"><span>Bloqueo con Face ID / huella<small>Pide desbloquear al abrir Yapp</small></span><input type="checkbox" class="sw" id="opt-lock" ${prefs.lock?'checked':''}></label>
-    </div>
-    <div class="plist glass"><div class="prow"><span>Número</span><span>${esc(user.phone)}</span></div></div>
-    <div class="plist glass"><div class="prow danger" id="btn-logout">Cerrar sesión</div></div>`;
-  refreshPcard();
-  const V=$('#view-profile');
-  V.querySelectorAll('[data-pm]').forEach(b=>b.onclick=()=>{ pfSet({mode:b.dataset.pm}); renderProfile(); });
-  V.querySelectorAll('[data-pf]').forEach(b=>b.onclick=()=>{ const k=b.dataset.pf, v=b.dataset.v; if(k==='bk') pfSet({banner:{k:v}}); else pfSet({[k]:v}); renderProfile(); });
-  V.querySelectorAll('[data-badge]').forEach(b=>b.onclick=()=>{ let a=(profOf(user).badges).slice(); const x=b.dataset.badge; a=a.includes(x)?a.filter(y=>y!==x):[...a,x].slice(0,3); pfSet({badges:a}); renderProfile(); });
-  const bind=(id,fn)=>{ const el=V.querySelector(id); if(el) el.addEventListener('input',e=>fn(e.target.value)); };
-  bind('#pf-name',v=>{ user.name=v.trim()||user.name; localStorage.setItem('yapp_user',JSON.stringify(user)); refreshPcard(); clearTimeout(pfT); pfT=setTimeout(()=>db.collection('users').doc(myD).set({name:user.name},{merge:true}).catch(()=>{}),600); });
+    </div>`:''}`;
+  $('#pcard-wrap2').innerHTML=profileCardHTML(user,{});
+  $('#sheetback').classList.add('open');
+  if(root.closest('.sheet')) root.closest('.sheet').scrollTop=scroll;
+  root.querySelectorAll('[data-pm]').forEach(b=>b.onclick=()=>{ pfSet({mode:b.dataset.pm}); personalizeSheet(); });
+  root.querySelectorAll('[data-pf]').forEach(b=>b.onclick=()=>{ const k=b.dataset.pf, v=b.dataset.v; if(k==='bk') pfSet({banner:{k:v}}); else pfSet({[k]:v}); personalizeSheet(); });
+  root.querySelectorAll('[data-badge]').forEach(b=>b.onclick=()=>{ let a=(profOf(user).badges).slice(); const x=b.dataset.badge; a=a.includes(x)?a.filter(y=>y!==x):[...a,x].slice(0,3); pfSet({badges:a}); personalizeSheet(); });
+  const bind=(id,fn)=>{ const el=root.querySelector(id); if(el) el.addEventListener('input',e=>fn(e.target.value)); };
+  bind('#pf-name',v=>{ user.name=v.trim()||user.name; localStorage.setItem('yapp_user',JSON.stringify(user)); refreshPcard(); const pv=$('#pcard-wrap2'); if(pv) pv.innerHTML=profileCardHTML(user,{}); clearTimeout(pfT); pfT=setTimeout(()=>db.collection('users').doc(myD).set({name:user.name},{merge:true}).catch(()=>{}),600); });
   bind('#pf-bio',v=>pfSet({bio:v})); bind('#pf-pron',v=>pfSet({pron:v})); bind('#pf-tag',v=>pfSet({tag:v})); bind('#pf-song',v=>pfSet({song:v}));
   bind('#pf-acc',v=>pfSet({accent:v})); bind('#pf-c1',v=>pfSet({banner:{c1:v}})); bind('#pf-c2',v=>pfSet({banner:{c2:v}})); bind('#pf-ang',v=>pfSet({banner:{ang:Number(v)}}));
-  const fs=V.querySelector('#pf-font'); if(fs) fs.onchange=e=>pfSet({nameFont:e.target.value});
-  const lk=()=>{ const l=[0,1,2].map(i=>({label:(V.querySelector(`.pf-ll[data-i="${i}"]`)||{}).value||'',url:(V.querySelector(`.pf-lu[data-i="${i}"]`)||{}).value||''})); pfSet({links:l}); };
-  V.querySelectorAll('.pf-ll,.pf-lu').forEach(i=>i.addEventListener('input',lk));
-  const bi=V.querySelector('#pf-bimg'); if(bi) bi.onclick=()=>$('#banner-input').click();
-  $('#banner-input').addEventListener('change',e=>{ const f=e.target.files[0]; if(!f) return; imgToDataURL(f,{max:640,q:.7},u=>{ pfSet({banner:{k:'image',img:u}}); }); });
-  $('#my-pic-input').addEventListener('change', e=>{ const f=e.target.files[0]; if(!f) return;
-    imgToDataURL(f,{max:200,square:true,q:.82}, async u=>{ user.photo=u; localStorage.setItem('yapp_user',JSON.stringify(user)); try{ await db.collection('users').doc(myD).set({photo:u},{merge:true}); }catch(err){ showBanner(explainFirebaseError(err)); } refreshPcard(); updateNavAvatar(); }); });
-  $('#opt-dnd').onchange=async e=>{ user.dnd=e.target.checked; localStorage.setItem('yapp_user',JSON.stringify(user)); try{ await db.collection('users').doc(myD).set({dnd:user.dnd},{merge:true}); }catch(err){ showBanner(explainFirebaseError(err)); } refreshPcard(); toast(user.dnd?'No molestar activado':'No molestar desactivado'); };
-  $('#opt-seen').onchange=e=>{ user.hideSeen=!e.target.checked; localStorage.setItem('yapp_user',JSON.stringify(user)); db.collection('users').doc(myD).set({hideSeen:user.hideSeen},{merge:true}).catch(()=>{}); touchSeen(); };
-  $('#opt-shared').onchange=e=>{ prefs.sharedStyle=e.target.checked; savePrefs(); if(openChat) applyEff(); toast(prefs.sharedStyle?'Estilo compartido: los dos veis el mismo':'Cada uno ve su propio estilo'); };
-  $('#btn-status').onclick=()=>{ activeStatus(user)?openStatus(myD):statusSheet(); };
-  $('#opt-focus').onchange=e=>{ prefs.focus=e.target.checked; savePrefs(); schedulePaint(); toast(prefs.focus?'Modo enfoque activado: marca chats como prioritarios desde ✦':'Modo enfoque desactivado'); };
-  $('#opt-notify').onchange=async e=>{ if(!e.target.checked){ prefs.notify=false; savePrefs(); return; } if(!('Notification' in window)){ toast('Este navegador no admite avisos'); e.target.checked=false; return; }
-    const p=await Notification.requestPermission(); prefs.notify=p==='granted'; e.target.checked=prefs.notify; savePrefs(); if(!prefs.notify) toast('Permiso denegado en el navegador'); };
-  $('#opt-quiet').onchange=e=>{ prefs.quiet.on=e.target.checked; savePrefs(); $('#quiet-times').style.display=prefs.quiet.on?'':'none'; };
-  $('#q-from').onchange=e=>{ prefs.quiet.from=e.target.value||'23:00'; savePrefs(); }; $('#q-to').onchange=e=>{ prefs.quiet.to=e.target.value||'08:00'; savePrefs(); };
-  $('#opt-tone').onchange=e=>{ prefs.tone=e.target.checked; savePrefs(); };
-  $('#opt-lock').onchange=async e=>{ if(e.target.checked){ const ok=await enableLock(); if(!ok){ e.target.checked=false; toast('Tu dispositivo no permite el bloqueo biométrico aquí'); } else toast('Bloqueo activado'); } else { prefs.lock=false; savePrefs(); localStorage.removeItem('yapp_cred'); } };
-  $('#btn-logout').onclick=async()=>{ if(confirm('¿Cerrar sesión y borrar tus datos locales?')){ try{ if(auth) await auth.signOut(); }catch(e){} localStorage.clear(); location.reload(); } };
+  const fs=root.querySelector('#pf-font'); if(fs) fs.onchange=e=>pfSet({nameFont:e.target.value});
+  const lk=()=>{ const l=[0,1,2].map(i=>({label:(root.querySelector(`.pf-ll[data-i="${i}"]`)||{}).value||'',url:(root.querySelector(`.pf-lu[data-i="${i}"]`)||{}).value||''})); pfSet({links:l}); };
+  root.querySelectorAll('.pf-ll,.pf-lu').forEach(i=>i.addEventListener('input',lk));
+  const bi=root.querySelector('#pf-bimg'); if(bi) bi.onclick=()=>$('#banner-input').click();
 }
 /* ---------- en línea / últ. vez ---------- */
 function seenText(u){
