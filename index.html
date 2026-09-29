@@ -491,6 +491,60 @@
   .appbg-opt{border-radius:14px;height:56px;border:2px solid transparent;cursor:pointer;padding:0;position:relative;overflow:hidden;}
   .appbg-opt.sel{border-color:#fff;}
   .appbg-opt span{position:absolute;bottom:3px;left:0;right:0;font-size:.6rem;font-weight:800;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6);}
+  /* ===== recortador de imagen ===== */
+  #cropback{position:fixed;inset:0;z-index:120;display:none;flex-direction:column;background:rgba(6,3,16,.94);backdrop-filter:blur(10px);}
+  #cropback.on{display:flex;}
+  .crop-head{display:flex;align-items:center;justify-content:space-between;padding:calc(14px + env(safe-area-inset-top)) 18px 10px;flex-shrink:0;}
+  .crop-head button{background:none;border:none;color:#fff;font-family:inherit;font-weight:800;font-size:.95rem;cursor:pointer;padding:8px;}
+  .crop-head button.primary{color:var(--accent);}
+  .crop-stage{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;touch-action:none;}
+  #cropCanvas{touch-action:none;cursor:grab;border-radius:8px;}
+  #cropCanvas.circle{border-radius:50%;}
+  .crop-foot{padding:14px 26px calc(20px + env(safe-area-inset-bottom));flex-shrink:0;}
+  .crop-zoom{display:flex;align-items:center;gap:12px;color:#fff;}
+  .crop-zoom svg{flex-shrink:0;opacity:.7;}
+  .crop-zoom input{flex:1;}
+  .crop-hint{text-align:center;color:rgba(255,255,255,.55);font-size:.78rem;margin-top:10px;}
+
+  /* ===== Personalizar aplicación ===== */
+  #btn-app-personalize{margin:0 0 18px;}
+  .globalbar{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:16px;background:rgba(255,255,255,.09);margin-bottom:14px;}
+  .globalbar .gi{flex:1;} .globalbar b{display:block;font-size:.88rem;} .globalbar small{color:var(--sub);font-size:.74rem;}
+  .cklist{max-height:230px;overflow-y:auto;border-radius:14px;background:rgba(255,255,255,.06);margin-bottom:12px;}
+  .ckrow{display:flex;align-items:center;gap:11px;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.07);cursor:pointer;} .ckrow:last-child{border-bottom:none;}
+  .ckrow .cb{width:21px;height:21px;border-radius:50%;border:2px solid rgba(255,255,255,.4);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;}
+  .ckrow.on .cb{background:var(--accent);border-color:var(--accent);}
+  .bubble-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px;}
+  .bubble-opt{border-radius:14px;padding:10px 4px;border:2px solid transparent;background:rgba(255,255,255,.08);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .bubble-opt.sel{border-color:#fff;background:rgba(255,255,255,.18);}
+  .bubble-opt span{font-size:.68rem;font-weight:800;color:#fff;}
+  .bubble-prev{width:52px;height:24px;background:var(--accent);position:relative;}
+  .bp-redonda{border-radius:14px 14px 4px 14px;} .bp-cuadrada{border-radius:6px;} .bp-clasica{border-radius:14px 14px 3px 14px;} .bp-pildora{border-radius:999px;} .bp-minima{background:none;border-left:3px solid var(--accent);border-radius:0;width:44px;}
+  .note-box{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.07);font-size:.8rem;color:var(--sub);line-height:1.5;margin-bottom:10px;}
+  .note-box b{color:#fff;}
+
+  /* ===== globos de texto: formas independientes del tema ===== */
+  #thread[data-bubble="cuadrada"] .bub:not(.media):not(.stk):not(.jumbo):not(.gftb):not(.pls){border-radius:7px !important;}
+  #thread[data-bubble="cuadrada"] .bub:not(.media):not(.stk):not(.jumbo):not(.gftb):not(.pls)::after{display:none !important;}
+  #thread[data-bubble="pildora"] .bub:not(.media):not(.stk):not(.jumbo):not(.gftb):not(.pls){border-radius:999px !important;padding-left:18px !important;padding-right:18px !important;}
+  #thread[data-bubble="pildora"] .bub:not(.media):not(.stk):not(.jumbo):not(.gftb):not(.pls)::after{display:none !important;}
+  #thread[data-bubble="clasica"] .me .bub:not(.media):not(.stk):not(.jumbo):not(.gftb):not(.pls){border-radius:18px 18px 3px 18px !important;}
+  #thread[data-bubble="clasica"] .them .bub:not(.media):not(.stk):not(.jumbo):not(.gftb):not(.pls){border-radius:18px 18px 18px 3px !important;}
+  #thread[data-bubble="clasica"] .me[data-pos=last] .bub:not(.media):not(.stk):not(.jumbo):not(.gftb):not(.pls)::after,#thread[data-bubble="clasica"] .me[data-pos=single] .bub:not(.media):not(.stk):not(.jumbo):not(.gftb):not(.pls)::after,#thread[data-bubble="clasica"] .them[data-pos=last] .bub:not(.media):not(.stk):not(.jumbo):not(.gftb):not(.pls)::after,#thread[data-bubble="clasica"] .them[data-pos=single] .bub:not(.media):not(.stk):not(.jumbo):not(.gftb):not(.pls)::after{display:block !important;}
+  #thread[data-bubble="minima"] .bub:not(.media):not(.stk):not(.jumbo):not(.gftb):not(.pls){background:none !important;backdrop-filter:none !important;box-shadow:none !important;border:none !important;border-radius:2px !important;padding:2px 0 2px 12px !important;}
+  #thread[data-bubble="minima"] .bub:not(.media):not(.stk):not(.jumbo):not(.gftb):not(.pls)::after{display:none !important;}
+  #thread[data-bubble="minima"] .me .bub:not(.media):not(.stk):not(.jumbo):not(.gftb):not(.pls){border-left:3px solid var(--accent) !important;}
+  #thread[data-bubble="minima"] .them .bub:not(.media):not(.stk):not(.jumbo):not(.gftb):not(.pls){border-left:3px solid rgba(255,255,255,.35) !important;}
+  #thread[data-bubble="minima"] .quote{border-left-color:currentColor;}
+
+  /* ===== más fondos de app (planos, seguros con texto blanco) ===== */
+  html[data-appbg="medianoche"] .blob{display:none;} html[data-appbg="medianoche"] #bg{background:linear-gradient(160deg,#0d1b2e,#050a14);}
+  html[data-appbg="ciruela"] .blob{display:none;} html[data-appbg="ciruela"] #bg{background:linear-gradient(160deg,#3a1030,#160814);}
+  html[data-appbg="bosque2"] .blob{display:none;} html[data-appbg="bosque2"] #bg{background:linear-gradient(160deg,#0f2a1c,#06130c);}
+
+  #thread[data-style="medianoche2"]{--tbg:linear-gradient(165deg,#101a2e 0%,#060a16 70%);--bubble-me:#3d6bff;--bubble-them:rgba(255,255,255,.08);}
+  #thread[data-style="amanecer"]{--tbg:linear-gradient(165deg,#ffd18a 0%,#ff8f70 45%,#5b4a9e 100%);--bubble-me:#ffffff;--bubble-them:rgba(30,15,50,.32);}
+  #thread[data-style="amanecer"] .me .bub{color:#8a3d1f;font-weight:700;}
 
   .ghostrow{opacity:1;} .ghostb{opacity:.6;}
   .dnd-badge{position:absolute;bottom:-3px;right:-3px;border-radius:50%;background:#ed4245;border:3px solid #150d28;z-index:3;display:flex;align-items:center;justify-content:center;box-sizing:content-box;}
@@ -559,11 +613,11 @@
   </div>
 </div>
 
-<input type="file" id="photo-input" accept="image/*" style="display:none"><input type="file" id="gphoto-input" accept="image/*" style="display:none">
+<input type="file" id="photo-input" accept="image/*" style="display:none"><input type="file" id="gphoto-input" accept="image/*" style="display:none"><input type="file" id="banner-input" accept="image/*" style="display:none">
 
 <div id="viewer"><button id="viewer-close">✕</button><div id="viewer-pic"></div><div id="viewer-name"></div></div>
 <div id="sheetback"><div class="sheet" id="sheetbody"></div></div>
-<div id="toast"></div><canvas id="fxc"></canvas><div id="ctx"></div><div id="fxpick"></div>
+<div id="toast"></div><div id="cropback"><div class="crop-head"><button id="crop-cancel">Cancelar</button><span id="crop-title" style="color:#fff;font-weight:800;font-size:.92rem"></span><button class="primary" id="crop-ok">Listo</button></div><div class="crop-stage"><canvas id="cropCanvas"></canvas></div><div class="crop-foot"><div class="crop-zoom"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="10" cy="10" r="6"/><path d="M20 20l-4-4"/></svg><input type="range" id="crop-zoom-range" min="100" max="300" value="100"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="10" cy="10" r="8"/><path d="M20 20l-5-5"/></svg></div><div class="crop-hint">Arrastra para mover · desliza para acercar</div></div></div><canvas id="fxc"></canvas><div id="ctx"></div><div id="fxpick"></div>
 <div id="addbackdrop">
   <div id="addmodal">
     <div class="tabs"><button class="tab on" data-tab="single">Individual</button><button class="tab" data-tab="group">Grupo</button></div>
@@ -624,6 +678,8 @@ const STYLES = [
   {k:'bosque',n:'Bosque',prev:'linear-gradient(135deg,#3c8c5a,#0b1a12)'},
   {k:'romantico',n:'Romántico',prev:'linear-gradient(160deg,#ff5d8f,#8f0f34)'},{k:'oceano',n:'Océano',prev:'linear-gradient(180deg,#0a3556,#0b6f95,#5fd0e0)'},{k:'galaxia',n:'Galaxia',prev:'radial-gradient(circle at 75% 20%,#8a55ff,#06051a 70%)'},
   {k:'algodon',n:'Algodón',prev:'linear-gradient(160deg,#ffb3dc,#cdbdff,#a9dcff)'},{k:'lofi',n:'Lo-fi',prev:'linear-gradient(180deg,#2a1c3b,#7d3f57)'},{k:'aurora',n:'Aurora',prev:'linear-gradient(180deg,#03101d,#1fc08a)'},{k:'retro',n:'Retro Y2K',prev:'linear-gradient(135deg,#ff9be4,#a99bff,#71e8ff)'},
+  {k:'medianoche2',n:'Medianoche',prev:'linear-gradient(160deg,#101a2e,#040711)'},
+  {k:'amanecer',n:'Amanecer',prev:'linear-gradient(160deg,#ffd18a,#ff8f70,#5b4a9e)'},
   {k:'simple',n:'Simple',prev:'linear-gradient(160deg,#e9edf1,#d7e6da)'}
 ];
 let prefs = Object.assign({styles:{},live:{},priority:{},hidden:{},hiddenHash:'',custom:[],focus:false,notify:false,tone:false,lock:false,appBg:'aurora',quiet:{on:false,from:'23:00',to:'08:00'}}, JSON.parse(localStorage.getItem('yapp_prefs')||'{}'));
@@ -775,7 +831,7 @@ $('#btn-verify').onclick = () => { if([...$$('.code-boxes input')].map(i=>i.valu
 COLORS.forEach((c,i)=>{ const d=document.createElement('div'); d.className='swatch'+(i===0?' sel':''); d.style.background=c;
   d.onclick=()=>{ $$('.swatch').forEach(s=>s.classList.remove('sel')); d.classList.add('sel'); chosenColor=c; $('#pic-circle').style.background=c; }; $('#swatches').appendChild(d); });
 $('#pic-circle').onclick = () => $('#pic-input').click();
-$('#pic-input').addEventListener('change', e => { const f=e.target.files[0]; if(!f) return; imgToDataURL(f,{max:200,square:true,q:.82}, u=>{ chosenPhoto=u; $('#pic-circle').innerHTML=`<img src="${u}"><div class="cam">📷</div>`; }); });
+$('#pic-input').addEventListener('change', e => { const f=e.target.files[0]; if(!f) return; openCropper(f,{shape:'circle',ratio:1,outW:320,outH:320,q:.85,title:'Encuadra tu foto'}, u=>{ chosenPhoto=u; $('#pic-circle').innerHTML=`<img src="${u}"><div class="cam">📷</div>`; }); e.target.value=''; });
 $('#name-input').addEventListener('input', () => { if(!chosenPhoto) $('#pic-initial').textContent = initials($('#name-input').value); });
 $('#btn-finish').onclick = async () => {
   const name=$('#name-input').value.trim(); if(!name) return;
@@ -1333,21 +1389,26 @@ $('#sheetbody').addEventListener('change', e=>{
 
 /* ---- estilo, temas y chats ocultos ---- */
 function styleSheet(){
-  const id=openChat.id, es=effStyle(), cur=es.ck||es.k, cu=prefs.custom||[];
+  const id=openChat.id, es=effStyle(), cur=es.ck||es.k, cu=prefs.custom||[], curB=effBubble(), globalOn=prefs.globalTheme&&prefs.globalTheme.on;
   openSheet(`<h3>Ajustes del chat</h3>
     <button class="srow" data-act="cs-search"><span class="ic">🔍</span>Buscar en el chat</button>
     <button class="srow" data-act="starred"><span class="ic">⭐</span>Mensajes destacados</button>
     ${isGroup()?'<button class="srow" data-act="cs-info"><span class="ic">👥</span>Info del grupo</button>':''}
-    <div class="sect" style="margin-top:8px">Estilo del chat</div>
+    <div class="sect" style="margin-top:8px">Fondo del chat</div>
+    ${globalOn?`<div class="note-box">Tienes activado <b>«Un tema para todos mis chats»</b> en Personalizar aplicación, así que este chat usa siempre ese mismo fondo.</div>`:`
     <p class="lead2">${sharedOn()?'Lo veis igual los dos: lo que elijas aquí lo verá la otra persona también.':'Solo lo ves tú: la otra persona verá el suyo.'}</p>
     <div class="styles">${STYLES.map(s=>`<button class="stylecard ${cur===s.k?'sel':''}" data-act="style" data-k="${s.k}" style="background:${s.prev}">${s.n}</button>`).join('')}
     ${cu.map(s=>`<button class="stylecard ${cur===s.k?'sel':''}" data-act="style" data-k="${s.k}" style="background:linear-gradient(135deg,${s.v.a},${s.v.b})">${esc(s.n)}</button>`).join('')}</div>
     <button class="btn mini" data-act="theme-new">🎨 Crear tema propio</button>
-    ${cu.find(s=>s.k===cur)?`<button class="btn mini" data-act="theme-del" data-k="${cur}">🗑 Eliminar este tema</button>`:''}
+    ${cu.find(s=>s.k===cur)?`<button class="btn mini" data-act="theme-del" data-k="${cur}">🗑 Eliminar este tema</button>`:''}`}
+    <div class="sect" style="margin-top:8px">Globos de texto</div>
+    <p class="lead2">La forma de las burbujas, aparte del fondo.</p>
+    ${bubbleCards(curB,'bub')}
     <div class="sect" style="margin-top:8px">Este chat</div>
     <label class="trow"><span>Prioritario en modo enfoque</span><input type="checkbox" class="sw" data-act="prio" ${prefs.priority[id]?'checked':''}></label>
     <label class="trow"><span>Ocultar este chat<br><small style="color:var(--sub);font-weight:500">Desaparece de la lista; se ve con tu contraseña en el buscador</small></span><input type="checkbox" class="sw" data-act="hide" ${prefs.hidden[id]?'checked':''}></label>
     ${isGroup()?'':`<label class="trow"><span>Escritura en directo<br><small style="color:var(--sub);font-weight:500">La otra persona ve lo que tecleas, en vivo</small></span><input type="checkbox" class="sw" data-act="live" ${prefs.live[id]?'checked':''}></label>`}`);
+  $$('[data-bub]').forEach(b=>b.onclick=()=>{ setChatBubble(b.dataset.bub); styleSheet(); });
 }
 $('#btn-style').onclick=()=>{ if(openChat) styleSheet(); };
 function starredSheet(){
@@ -1919,18 +1980,12 @@ function renderProfile(){
   $('#view-profile').innerHTML=`
     <div id="pcard-wrap"></div><input type="file" id="my-pic-input" accept="image/*" style="display:none">
     <button class="btn mini" id="btn-personalize">✨ Personalizar tarjeta de perfil</button>
+    <button class="btn mini" id="btn-app-personalize">🎨 Personalizar aplicación</button>
     <div class="sect">Estado de 24 h</div>
     <button class="btn mini" id="btn-status">${activeStatus(user)?'Ver o cambiar mi estado de 24 h':'✨ Publicar un estado de 24 h'}</button>
     <div class="plist glass">
       <label class="prow"><span>No molestar<small>Un icono rojo en tu foto y sin avisos mientras esté activo</small></span><input type="checkbox" class="sw" id="opt-dnd" ${user.dnd?'checked':''}></label>
       <label class="prow"><span>Mostrar "en línea" y "últ. vez"<small>Si lo apagas, tampoco verás el de los demás</small></span><input type="checkbox" class="sw" id="opt-seen" ${user.hideSeen?'':'checked'}></label>
-      <label class="prow"><span>Estilo de chat compartido<small>Los dos veis el estilo que elija cualquiera. Apagado: cada uno ve el suyo</small></span><input type="checkbox" class="sw" id="opt-shared" ${sharedOn()?'checked':''}></label>
-      <div class="prow col"><span>Fondo de la app</span><div class="appbg-opts">
-        <button class="appbg-opt ${(prefs.appBg||'aurora')==='aurora'?'sel':''}" data-appbg="aurora" style="background:linear-gradient(135deg,#ff6b9d,#5b7bff,#ffb84d)"><span>Vivo</span></button>
-        <button class="appbg-opt ${prefs.appBg==='calm'?'sel':''}" data-appbg="calm" style="background:linear-gradient(135deg,#5b4a86,#2c2450)"><span>Suave</span></button>
-        <button class="appbg-opt ${prefs.appBg==='mist'?'sel':''}" data-appbg="mist" style="background:radial-gradient(ellipse at 50% 0%,#2a2140,#0b0620)"><span>Bruma</span></button>
-        <button class="appbg-opt ${prefs.appBg==='solid'?'sel':''}" data-appbg="solid" style="background:linear-gradient(165deg,#1b1428,#0a0518)"><span>Sólido</span></button>
-      </div></div>
       <label class="prow"><span>Modo enfoque<small>Solo los chats prioritarios te avisan y salen arriba</small></span><input type="checkbox" class="sw" id="opt-focus" ${prefs.focus?'checked':''}></label>
       <label class="prow"><span>Avisos del navegador<small>Cuando llegue un mensaje con Yapp en segundo plano</small></span><input type="checkbox" class="sw" id="opt-notify" ${prefs.notify?'checked':''}></label>
       <label class="prow"><span>Modo tranquilo<small>Sin avisos ni ruido en estas horas</small></span><input type="checkbox" class="sw" id="opt-quiet" ${q.on?'checked':''}></label>
@@ -1942,13 +1997,12 @@ function renderProfile(){
     <div class="plist glass"><div class="prow danger" id="btn-logout">Cerrar sesión</div></div>`;
   refreshPcard();
   $('#my-pic-input').addEventListener('change', e=>{ const f=e.target.files[0]; if(!f) return;
-    imgToDataURL(f,{max:200,square:true,q:.82}, async u=>{ user.photo=u; localStorage.setItem('yapp_user',JSON.stringify(user)); try{ await db.collection('users').doc(myD).set({photo:u},{merge:true}); }catch(err){ showBanner(explainFirebaseError(err)); } refreshPcard(); updateNavAvatar(); }); });
+    openCropper(f,{shape:'circle',ratio:1,outW:320,outH:320,q:.85,title:'Encuadra tu foto'}, async u=>{ user.photo=u; localStorage.setItem('yapp_user',JSON.stringify(user)); try{ await db.collection('users').doc(myD).set({photo:u},{merge:true}); }catch(err){ showBanner(explainFirebaseError(err)); } refreshPcard(); updateNavAvatar(); }); e.target.value=''; });
   $('#btn-personalize').onclick=personalizeSheet;
+  $('#btn-app-personalize').onclick=appPersonalizeSheet;
   $('#opt-dnd').onchange=async e=>{ user.dnd=e.target.checked; localStorage.setItem('yapp_user',JSON.stringify(user)); try{ await db.collection('users').doc(myD).set({dnd:user.dnd},{merge:true}); }catch(err){ showBanner(explainFirebaseError(err)); } refreshPcard(); toast(user.dnd?'No molestar activado':'No molestar desactivado'); };
   $('#opt-seen').onchange=e=>{ user.hideSeen=!e.target.checked; localStorage.setItem('yapp_user',JSON.stringify(user)); db.collection('users').doc(myD).set({hideSeen:user.hideSeen},{merge:true}).catch(()=>{}); touchSeen(); };
-  $('#opt-shared').onchange=e=>{ prefs.sharedStyle=e.target.checked; savePrefs(); if(openChat) applyEff(); toast(prefs.sharedStyle?'Estilo compartido: los dos veis el mismo':'Cada uno ve su propio estilo'); };
   $('#btn-status').onclick=()=>{ activeStatus(user)?openStatus(myD):statusSheet(); };
-  $$('.appbg-opt').forEach(b=>b.onclick=()=>{ prefs.appBg=b.dataset.appbg; savePrefs(); applyAppBg(); renderProfile(); });
   $('#opt-focus').onchange=e=>{ prefs.focus=e.target.checked; savePrefs(); schedulePaint(); toast(prefs.focus?'Modo enfoque activado: marca chats como prioritarios desde ✦':'Modo enfoque desactivado'); };
   $('#opt-notify').onchange=async e=>{ if(!e.target.checked){ prefs.notify=false; savePrefs(); return; } if(!('Notification' in window)){ toast('Este navegador no admite avisos'); e.target.checked=false; return; }
     const p=await Notification.requestPermission(); prefs.notify=p==='granted'; e.target.checked=prefs.notify; savePrefs(); if(!prefs.notify) toast('Permiso denegado en el navegador'); };
@@ -2001,7 +2055,7 @@ function personalizeSheet(){
   const fs=root.querySelector('#pf-font'); if(fs) fs.onchange=e=>pfSet({nameFont:e.target.value});
   const lk=()=>{ const l=[0,1,2].map(i=>({label:(root.querySelector(`.pf-ll[data-i="${i}"]`)||{}).value||'',url:(root.querySelector(`.pf-lu[data-i="${i}"]`)||{}).value||''})); pfSet({links:l}); };
   root.querySelectorAll('.pf-ll,.pf-lu').forEach(i=>i.addEventListener('input',lk));
-  const bi=root.querySelector('#pf-bimg'); if(bi) bi.onclick=()=>$('#banner-input').click();
+  const bi=root.querySelector('#pf-bimg'); if(bi) bi.onclick=()=>pickAndCrop($('#banner-input'),{shape:'rect',ratio:3.35,outW:700,outH:209,q:.8,title:'Encuadra el banner'}, u=>{ pfSet({banner:{k:'image',img:u}}); });
 }
 /* ---------- en línea / últ. vez ---------- */
 function seenText(u){
@@ -2093,6 +2147,141 @@ function fxEcho(text){
   document.body.appendChild(box); setTimeout(()=>box.remove(),4600);
 }
 function openSearch(){ if(!openChat) return; $('#searchbar').classList.add('on'); $('#search-in').focus(); }
+/* ================= recortador de imagen ================= */
+let crop=null;
+function openCropper(file, opts, onDone){
+  const img=new Image(), reader=new FileReader();
+  reader.onload=e=>{ img.onload=()=>{
+    const back=$('#cropback'), cv=$('#cropCanvas'), stage=$('.crop-stage');
+    const boxW=Math.min(320, innerWidth-64), boxH=opts.shape==='circle'?boxW:Math.round(boxW/opts.ratio);
+    cv.width=Math.round(boxW*Math.min(2,devicePixelRatio||1)); cv.height=Math.round(boxH*Math.min(2,devicePixelRatio||1));
+    cv.style.width=boxW+'px'; cv.style.height=boxH+'px'; cv.classList.toggle('circle', opts.shape==='circle');
+    crop={img,boxW,boxH,zoom:1,offX:0,offY:0,onDone,opts,dpr:Math.min(2,devicePixelRatio||1)};
+    $('#crop-title').textContent=opts.title||'Ajusta la imagen';
+    $('#crop-zoom-range').value=100;
+    back.classList.add('on'); cropDraw();
+  }; img.src=e.target.result; };
+  reader.readAsDataURL(file);
+}
+function cropScale(w,h){ const c=crop; return Math.max(w/c.img.naturalWidth, h/c.img.naturalHeight)*c.zoom; }
+function cropClamp(){
+  const c=crop, sc=cropScale(c.boxW,c.boxH), maxX=Math.max(0,(c.img.naturalWidth*sc-c.boxW)/2), maxY=Math.max(0,(c.img.naturalHeight*sc-c.boxH)/2);
+  c.offX=Math.max(-maxX,Math.min(maxX,c.offX)); c.offY=Math.max(-maxY,Math.min(maxY,c.offY));
+}
+function cropDraw(){
+  if(!crop) return; cropClamp();
+  const c=crop, cv=$('#cropCanvas'), ctx=cv.getContext('2d'), sc=cropScale(c.boxW,c.boxH);
+  ctx.setTransform(c.dpr,0,0,c.dpr,0,0); ctx.clearRect(0,0,c.boxW,c.boxH);
+  const dw=c.img.naturalWidth*sc, dh=c.img.naturalHeight*sc;
+  ctx.drawImage(c.img, c.boxW/2-dw/2+c.offX, c.boxH/2-dh/2+c.offY, dw, dh);
+}
+function cropRenderOut(w,h){
+  const c=crop, cv=document.createElement('canvas'); cv.width=w; cv.height=h; const ctx=cv.getContext('2d'), sc=cropScale(w,h);
+  const offX=c.offX*(w/c.boxW), offY=c.offY*(h/c.boxH), dw=c.img.naturalWidth*sc, dh=c.img.naturalHeight*sc;
+  ctx.drawImage(c.img, w/2-dw/2+offX, h/2-dh/2+offY, dw, dh);
+  return cv.toDataURL('image/jpeg', c.opts.q||.85);
+}
+function closeCropper(){ $('#cropback').classList.remove('on'); crop=null; }
+(function(){
+  const cv=$('#cropCanvas'); let drag=null;
+  const pt=e=>e.touches?{x:e.touches[0].clientX,y:e.touches[0].clientY}:{x:e.clientX,y:e.clientY};
+  const down=e=>{ if(!crop) return; drag={x:pt(e).x,y:pt(e).y,ox:crop.offX,oy:crop.offY}; cv.style.cursor='grabbing'; e.preventDefault(); };
+  const move=e=>{ if(!drag||!crop) return; const p=pt(e); crop.offX=drag.ox+(p.x-drag.x); crop.offY=drag.oy+(p.y-drag.y); cropDraw(); e.preventDefault(); };
+  const up=()=>{ drag=null; if(cv) cv.style.cursor='grab'; };
+  cv.addEventListener('pointerdown',down); cv.addEventListener('pointermove',move); cv.addEventListener('pointerup',up); cv.addEventListener('pointerleave',up); cv.addEventListener('pointercancel',up);
+  $('#crop-zoom-range').addEventListener('input',e=>{ if(!crop) return; crop.zoom=Number(e.target.value)/100; cropDraw(); });
+  $('#crop-cancel').onclick=()=>{ if(crop&&crop.onDone) {} closeCropper(); };
+  $('#crop-ok').onclick=()=>{ if(!crop) return; const {onDone,opts}=crop; const url=cropRenderOut(opts.outW,opts.outH); closeCropper(); onDone(url); };
+})();
+function pickAndCrop(inputEl, cropOpts, onDone){ inputEl.value=''; inputEl.onchange=e=>{ const f=e.target.files[0]; if(f) openCropper(f,cropOpts,onDone); }; inputEl.click(); }
+
+/* ================= burbujas (globos de texto) como eje independiente ================= */
+const BUBBLES=[['redonda','Redondeada','bp-redonda'],['cuadrada','Cuadrada','bp-cuadrada'],['clasica','Clásica','bp-clasica'],['pildora','Píldora','bp-pildora'],['minima','Mínima','bp-minima']];
+function effBubble(){
+  if(prefs.globalTheme&&prefs.globalTheme.on) return prefs.globalTheme.bubble||'redonda';
+  const oc=openChat, c=oc&&oc.chat;
+  if(c&&sharedOn()&&c.bubble) return c.bubble;
+  return (oc&&prefs.bubbles[oc.id]) || prefs.defaultBubble || 'redonda';
+}
+function setChatBubble(k){
+  const oc=openChat; if(!oc) return; prefs.bubbles[oc.id]=k; savePrefs();
+  if(sharedOn()) oc.ref.set({bubble:k},{merge:true}).catch(err=>showBanner(explainFirebaseError(err)));
+  if(oc.chat) oc.chat.bubble=k;
+  $('#thread').dataset.bubble=k;
+}
+
+/* ================= efectivo: extiende applyEff para fijar también data-bubble, y respeta el tema global ================= */
+const _effStyle_orig=effStyle, _applyStyle_orig=applyStyle;
+effStyle=function(){
+  if(prefs.globalTheme&&prefs.globalTheme.on){ const g=prefs.globalTheme; return g.k==='custom'?{k:'custom',v:cleanTheme(g.v)}:{k:g.k}; }
+  const oc=openChat, c=oc&&oc.chat;
+  if(c&&sharedOn()&&c.style) return c.style==='custom'?{k:'custom',v:cleanTheme(c.styleV)}:{k:c.style};
+  const k=(oc&&prefs.styles[oc.id])||prefs.defaultStyle||'cristal', cu=(prefs.custom||[]).find(s=>s.k===k);
+  return cu?{k:'custom',v:cu.v,ck:k}:{k};
+};
+applyEff=function(){ if(!openChat) return; const e=effStyle(); applyStyle(e.k==='custom'?'__custom':e.k, e.v); $('#thread').dataset.bubble=effBubble(); };
+
+/* ================= "Personalizar aplicación" ================= */
+prefs.bubbles=prefs.bubbles||{}; prefs.globalTheme=prefs.globalTheme||{on:false,k:'cristal',v:null,bubble:'redonda'}; prefs.defaultStyle=prefs.defaultStyle||'cristal'; prefs.defaultBubble=prefs.defaultBubble||'redonda';
+
+function allStyleCards(cur, onKey){
+  const cu=prefs.custom||[];
+  return STYLES.map(s=>`<button class="stylecard ${cur===s.k?'sel':''}" data-${onKey}="${s.k}" style="background:${s.prev}">${s.n}</button>`).join('')
+    +cu.map(s=>`<button class="stylecard ${cur===s.k?'sel':''}" data-${onKey}="${s.k}" style="background:linear-gradient(135deg,${s.v.a},${s.v.b})">${esc(s.n)}</button>`).join('');
+}
+function bubbleCards(cur, onKey){
+  return `<div class="bubble-opts">${BUBBLES.map(([k,n,cls])=>`<button class="bubble-opt ${cur===k?'sel':''}" data-${onKey}="${k}"><div class="bubble-prev ${cls}"></div><span>${n}</span></button>`).join('')}</div>`;
+}
+function appPersonalizeSheet(){
+  const g=prefs.globalTheme;
+openSheet(`<h3>Personalizar aplicación</h3><p class="lead2">Ajusta cómo se ven tus chats y la app.</p>
+    <div class="sect">Fondo de la app (fuera de los chats)</div><div class="appbg-opts">${[['aurora','Vivo','linear-gradient(135deg,#ff6b9d,#5b7bff,#ffb84d)'],['calm','Suave','linear-gradient(135deg,#5b4a86,#2c2450)'],['mist','Bruma','radial-gradient(ellipse at 50% 0%,#2a2140,#0b0620)'],['solid','Sólido','linear-gradient(165deg,#1b1428,#0a0518)'],['medianoche','Medianoche','linear-gradient(160deg,#0d1b2e,#050a14)'],['ciruela','Ciruela','linear-gradient(160deg,#3a1030,#160814)'],['bosque2','Bosque','linear-gradient(160deg,#0f2a1c,#06130c)']].map(([k,n,g2])=>`<button class="appbg-opt ${(prefs.appBg||'aurora')===k?'sel':''}" data-ab="${k}" style="background:${g2}"><span>${n}</span></button>`).join('')}</div>
+    <label class="prow" style="margin-bottom:14px"><span>Estilo de chat compartido<small>Los dos veis el estilo que elija cualquiera. Apagado: cada uno ve el suyo</small></span><input type="checkbox" class="sw" id="ap-shared" ${sharedOn()?'checked':''}></label>
+    <div class="sect">Tema de los chats</div>
+    <div class="globalbar"><div class="gi"><b>Un tema para todos mis chats</b><small>Ignora el estilo de cada chat y usa siempre el mismo</small></div><input type="checkbox" class="sw" id="ap-global" ${g.on?'checked':''}></div>
+    <div id="ap-global-body" style="${g.on?'':'display:none'}">
+      <div class="sect">Fondo</div><div class="styles">${allStyleCards(g.k,'apg')}</div>
+      <div class="sect">Globos de texto</div>${bubbleCards(g.bubble,'apgb')}
+    </div>
+    <div id="ap-default-body" style="${g.on?'display:none':''}">
+      <div class="sect">Fondo por defecto para chats nuevos</div><div class="styles">${allStyleCards(prefs.defaultStyle,'apd')}</div>
+      <div class="sect">Globos por defecto</div>${bubbleCards(prefs.defaultBubble,'apdb')}
+      <div class="note-box">Esto solo se usa cuando un chat concreto no tiene su propio estilo elegido. Puedes cambiar cada chat desde su ⚙.</div>
+      <button class="btn mini" id="ap-batch">🎯 Aplicar el mismo estilo a varios contactos</button>
+    </div>`);
+  $$('.appbg-opt').forEach(b=>b.onclick=()=>{ prefs.appBg=b.dataset.ab; savePrefs(); applyAppBg(); appPersonalizeSheet(); });
+  $('#ap-shared').onchange=e=>{ prefs.sharedStyle=e.target.checked; savePrefs(); if(openChat) applyEff(); toast(prefs.sharedStyle?'Estilo compartido: los dos veis el mismo':'Cada uno ve su propio estilo'); };
+  $('#ap-global').onchange=e=>{ prefs.globalTheme.on=e.target.checked; savePrefs(); applyEff(); appPersonalizeSheet(); };
+  $$('.styles [data-apg]').forEach(b=>b.onclick=()=>{ const k=b.dataset.apg, cu=(prefs.custom||[]).find(s=>s.k===k); prefs.globalTheme.k=cu?'custom':k; prefs.globalTheme.v=cu?cu.v:null; savePrefs(); applyEff(); appPersonalizeSheet(); });
+  $$('[data-apgb]').forEach(b=>b.onclick=()=>{ prefs.globalTheme.bubble=b.dataset.apgb; savePrefs(); applyEff(); appPersonalizeSheet(); });
+  $$('.styles [data-apd]').forEach(b=>b.onclick=()=>{ prefs.defaultStyle=b.dataset.apd; savePrefs(); appPersonalizeSheet(); });
+  $$('[data-apdb]').forEach(b=>b.onclick=()=>{ prefs.defaultBubble=b.dataset.apdb; savePrefs(); appPersonalizeSheet(); });
+  const bi=$('#ap-batch'); if(bi) bi.onclick=batchStyleSheet;
+}
+
+let batchSel=new Set(), batchStyle={k:'cristal',ck:null,v:null,bubble:'redonda'};
+function batchStyleSheet(){
+  batchSel=new Set(); batchStyle={k:'cristal',ck:null,v:null,bubble:'redonda'};
+  const items=chatsData.filter(c=>!prefs.hidden[c.id]).sort((a,b)=>tsMs(b.lastTs)-tsMs(a.lastTs));
+  openSheet(`<h3>Aplicar a varios chats</h3><p class="lead2">Elige con quién quieres compartir el mismo estilo.</p>
+    <div class="cklist">${items.map(c=>{ const p=chatProf(c); return `<div class="ckrow" data-ck="${esc(c.id)}"><span class="cb"></span>${avatarBlock(p,32)}<span>${esc(p.name)}</span></div>`; }).join('')||'<div style="padding:16px;color:var(--sub);font-size:.85rem">No tienes chats todavía.</div>'}</div>
+    <div class="sect">Fondo</div><div class="styles">${allStyleCards('cristal','bsk')}</div>
+    <div class="sect">Globos de texto</div>${bubbleCards('redonda','bskb')}
+    <button class="btn" id="batch-apply">Aplicar a ${0} chats</button>`);
+  const updCount=()=>{ const b=$('#batch-apply'); if(b) b.textContent=`Aplicar a ${batchSel.size} chat${batchSel.size===1?'':'s'}`; };
+  $$('.ckrow').forEach(r=>r.onclick=()=>{ const id=r.dataset.ck; if(batchSel.has(id)){ batchSel.delete(id); r.classList.remove('on'); r.querySelector('.cb').textContent=''; } else { batchSel.add(id); r.classList.add('on'); r.querySelector('.cb').textContent='✓'; } updCount(); });
+  $$('.styles [data-bsk]').forEach(b=>b.onclick=()=>{ $$('.styles [data-bsk]').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); const k=b.dataset.bsk, cu=(prefs.custom||[]).find(s=>s.k===k); batchStyle.k=cu?'custom':k; batchStyle.ck=cu?k:null; batchStyle.v=cu?cu.v:null; });
+  $$('[data-bskb]').forEach(b=>b.onclick=()=>{ $$('[data-bskb]').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); batchStyle.bubble=b.dataset.bskb; });
+  $('#batch-apply').onclick=async()=>{
+    if(!batchSel.size){ toast('Elige al menos un chat'); return; }
+    for(const id of batchSel){
+      prefs.styles[id]=batchStyle.ck||batchStyle.k;
+      prefs.bubbles[id]=batchStyle.bubble;
+      if(sharedOn()) db.collection('chats').doc(id).set({style:batchStyle.k, styleV:batchStyle.k==='custom'?batchStyle.v:FV.delete(), bubble:batchStyle.bubble},{merge:true}).catch(()=>{});
+    }
+    savePrefs(); closeSheet(); toast(`Estilo aplicado a ${batchSel.size} chat${batchSel.size===1?'':'s'}`);
+  };
+}
 
 /* =============== ARRANQUE =============== */
 (async () => {
