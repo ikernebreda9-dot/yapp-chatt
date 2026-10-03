@@ -573,8 +573,8 @@
     </div>
     <div class="step" id="step-code">
       <p class="logo">Yapp</p>
-      <p class="lead">Te hemos enviado un SMS a <b id="phone-display"></b> con un código de 4-6 cifras.</p><div id="recaptcha-box"></div>
-      <div class="code-boxes"><input class="glass" maxlength="1" inputmode="numeric"><input class="glass" maxlength="1" inputmode="numeric"><input class="glass" maxlength="1" inputmode="numeric"><input class="glass" maxlength="1" inputmode="numeric"></div>
+      <p class="lead">Te hemos enviado un SMS a <b id="phone-display"></b> con un código de 6 cifras.</p><div id="recaptcha-box"></div>
+      <div class="code-boxes"><input class="glass" maxlength="1" inputmode="numeric"><input class="glass" maxlength="1" inputmode="numeric"><input class="glass" maxlength="1" inputmode="numeric"><input class="glass" maxlength="1" inputmode="numeric"><input class="glass" maxlength="1" inputmode="numeric"><input class="glass" maxlength="1" inputmode="numeric"></div>
       <button class="btn" id="btn-verify">Verificar</button>
       <p class="hint"><b id="back-to-phone">← cambiar número</b></p>
     </div>
@@ -2410,7 +2410,7 @@ async function sendSmsCode(){
   }finally{ btn.disabled=false; btn.textContent='Enviar código'; }
 }
 async function verifySmsCode(){
-  const code=[...$$('.code-boxes input')].map(i=>i.value).join(''); if(code.length<4) return;
+  const code=[...$$('.code-boxes input')].map(i=>i.value).join(''); if(code.length<6) return;
   const btn=$('#btn-verify'); btn.disabled=true; btn.textContent='Verificando…';
   try{
     if(!smsConfirm) throw {code:'sms/no-request'};
