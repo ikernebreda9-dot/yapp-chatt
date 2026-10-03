@@ -2378,7 +2378,7 @@ async function deleteAccountFlow(){
 let recaptchaV=null, smsConfirm=null;
 function ensureRecaptcha(){
   if(!auth) return null;
-  if(!recaptchaV){ try{ recaptchaV=new firebase.auth.RecaptchaVerifier('recaptcha-box',{size:'invisible'},auth); }catch(e){ console.warn(e); } }
+  if(!recaptchaV){ recaptchaV=new firebase.auth.RecaptchaVerifier('recaptcha-box',{size:'invisible'},auth); }
   return recaptchaV;
 }
 function explainSmsError(err){
