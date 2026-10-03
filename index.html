@@ -1356,7 +1356,7 @@ async function doForward(cid){
   const m=sheetCtx.m, c=chatsData.find(x=>x.id===cid); if(!c) return; closeSheet();
   const d={from:myD, ts:FV.serverTimestamp(), type:m.type||'text', mode:'normal', fwd:true};
   ['text','image','audio','dur','transcript'].forEach(k=>{ if(m[k]!==undefined) d[k]=m[k]; }); if(!c.isGroup) d.read=false;
-  await postMessage(c,d); toast('Reenviado a '+chatTitle(c));
+  await postChatMessage(c,d); toast('Reenviado a '+chatTitle(c));
 }
 $('#sheetbody').addEventListener('click', async e=>{
   const b=e.target.closest('[data-act]'); if(!b || b.tagName==='INPUT') return; const act=b.dataset.act, oc=openChat;
@@ -1529,7 +1529,7 @@ function previewOf(d){
   if(d.mode==='burn'||d.mode==='day') return d.type==='pulse'?'💓 Latido':'🔥 Mensaje temporal'; if(d.deliverAt) return '⏳ Cápsula del tiempo';
   switch(d.type){ case 'image': return d.gif?'🖼 GIF':'📷 Foto'; case 'sticker': return '🩷 Sticker'; case 'pulse': return '💓 Latido'; case 'audio': return pre+'🎤 Mensaje de voz'; case 'loc': return '📍 Ubicación en directo'; case 'plan': return '📊 '+d.plan.title; case 'challenge': return '🎯 Reto del día'; default: return pre+stripFmt(d.text).slice(0,80); }
 }
-async function postMessage(chat, data, id){
+async function postChatMessage(chat, data, id){
   const ref=db.collection('chats').doc(chat.id), others=chat.participants.filter(p=>p!==myD), unread={}; others.forEach(o=>unread[o]=FV.increment(1));
   try{
     let mref; if(id){ mref=ref.collection('messages').doc(id); await mref.set(data); } else mref=await ref.collection('messages').add(data);
@@ -1545,7 +1545,7 @@ function sendMessage(extra, id){
   if(!oc.chat.isGroup) data.read=false;
   if(data.mode==='day') data.expiresAt=Date.now()+864e5;
   if(compose.reply&&!inThread) data.replyTo=compose.reply;
-  const p=postMessage(oc.chat, data, id);
+  const p=postChatMessage(oc.chat, data, id);
   if(!inThread){ compose.reply=null; compose.mode='normal'; renderComposeBars(); setLive({typing:0,draft:'',draftOn:false}); scrollBottom(); }
   return p;
 }
@@ -1587,7 +1587,7 @@ async function openChallenge(){
   if(snap.exists){ toast('El reto de hoy ya está en el chat'); scrollToMsg(id); return; }
   const q=CHALLENGES[Math.floor(Date.now()/864e5)%CHALLENGES.length];
   const data={from:myD, ts:FV.serverTimestamp(), type:'challenge', mode:'normal', q, answers:{}}; if(!oc.chat.isGroup) data.read=false;
-  postMessage(oc.chat, data, id); scrollBottom();
+  postChatMessage(oc.chat, data, id); scrollBottom();
 }
 function shareLocation(){
   if(!navigator.geolocation){ toast('Tu navegador no permite ubicación'); return; }
