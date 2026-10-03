@@ -546,6 +546,12 @@
   #thread[data-style="amanecer"]{--tbg:linear-gradient(165deg,#ffd18a 0%,#ff8f70 45%,#5b4a9e 100%);--bubble-me:#ffffff;--bubble-them:rgba(30,15,50,.32);}
   #thread[data-style="amanecer"] .me .bub{color:#8a3d1f;font-weight:700;}
 
+  /* ===== editor de tema simplificado ===== */
+  .td-bgs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px;}
+  .td-bg{aspect-ratio:1;border-radius:14px;border:2px solid transparent;cursor:pointer;padding:0;}
+  .td-bg.sel{border-color:#fff;}
+  .td-bg.td-custom{display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem;}
+
   .ghostrow{opacity:1;} .ghostb{opacity:.6;}
   .dnd-badge{position:absolute;bottom:-3px;right:-3px;border-radius:50%;background:#ed4245;border:3px solid #150d28;z-index:3;display:flex;align-items:center;justify-content:center;box-sizing:content-box;}
   .dnd-badge::after{content:'';width:55%;height:2.5px;background:#fff;border-radius:2px;}
@@ -563,11 +569,11 @@
       <p class="logo">Yapp</p>
       <p class="lead">Escribe tu número para empezar. Es lo único que necesitan tus contactos para encontrarte.</p>
       <div class="row-cc"><input class="field glass" id="cc" value="+34" maxlength="4"><input class="field glass" id="phone-input" placeholder="600 000 000" inputmode="numeric"></div>
-      <button class="btn" id="btn-send-code">Enviar código</button>
+      <button class="btn" id="btn-send-code">Enviar código</button><p class="hint" style="margin-top:16px">Al continuar aceptas nuestra <a href="privacy.html" target="_blank" style="color:var(--text)">Política de privacidad</a> y <a href="terms.html" target="_blank" style="color:var(--text)">Términos</a>.</p>
     </div>
     <div class="step" id="step-code">
       <p class="logo">Yapp</p>
-      <p class="lead">Código enviado a <b id="phone-display"></b>. (Simulado: prueba <b>0000</b>).</p>
+      <p class="lead">Te hemos enviado un SMS a <b id="phone-display"></b> con un código de 4-6 cifras.</p><div id="recaptcha-box"></div>
       <div class="code-boxes"><input class="glass" maxlength="1" inputmode="numeric"><input class="glass" maxlength="1" inputmode="numeric"><input class="glass" maxlength="1" inputmode="numeric"><input class="glass" maxlength="1" inputmode="numeric"></div>
       <button class="btn" id="btn-verify">Verificar</button>
       <p class="hint"><b id="back-to-phone">← cambiar número</b></p>
@@ -803,6 +809,7 @@ const inviteLink=c=>`${location.origin}${location.pathname}?join=${c.id}.${c.inv
 const rndCode=()=>Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-4);
 const stripFmt=t=>String(t||'').replace(/⟦\w+\|([^⟧]*)⟧/g,'$1').replace(/(\*\*|__|~~|\|\|)/g,'');
 const hiddenForMe=m=>{ if(m.hiddenFor&&m.hiddenFor[myD]) return true; if(!openChat) return false; const p=cp(openChat.id), lim=Math.max(p.clearedAt||0,p.deletedAt||0); const t=tsMs(m.ts); return !!(lim&&t&&t<=lim); };
+let pendingFull=null;
 function watchUser(phone, cb){
   const s = userSubs[phone] || (userSubs[phone]={cbs:new Set(), unsub:null});
   s.cbs.add(cb);
@@ -824,10 +831,10 @@ function burst(emoji){
 
 /* =============== ONBOARDING =============== */
 function goStep(id){ $$('.step').forEach(s=>s.classList.remove('active')); $('#'+id).classList.add('active'); }
-$('#btn-send-code').onclick = () => { const n=$('#phone-input').value.trim(); if(n.length<6) return; $('#phone-display').textContent=$('#cc').value+' '+n; goStep('step-code'); document.querySelector('.code-boxes input').focus(); };
+$('#btn-send-code').onclick = sendSmsCode;
 $('#back-to-phone').onclick = () => goStep('step-phone');
 $$('.code-boxes input').forEach((inp,i,arr)=>inp.addEventListener('input',()=>{ if(inp.value && arr[i+1]) arr[i+1].focus(); }));
-$('#btn-verify').onclick = () => { if([...$$('.code-boxes input')].map(i=>i.value).join('').length<4) return; goStep('step-profile'); };
+$('#btn-verify').onclick = verifySmsCode;
 COLORS.forEach((c,i)=>{ const d=document.createElement('div'); d.className='swatch'+(i===0?' sel':''); d.style.background=c;
   d.onclick=()=>{ $$('.swatch').forEach(s=>s.classList.remove('sel')); d.classList.add('sel'); chosenColor=c; $('#pic-circle').style.background=c; }; $('#swatches').appendChild(d); });
 $('#pic-circle').onclick = () => $('#pic-input').click();
@@ -854,8 +861,8 @@ $('#btn-finish').onclick = async () => {
 function launchApp(){
   $('#onboarding').style.display='none'; $('#app').classList.add('active');
   if(!db){ showBanner('Firebase no está configurado.'); return; }
-  watchUser(myD, p=>{ if(p){ user=Object.assign(user,p); if(!p.status) delete user.status; localStorage.setItem('yapp_user',JSON.stringify(user)); updateNavAvatar(); schedulePaint(); } });
-  startChats(); renderProfile(); startPresence();
+  watchUser(myD, p=>{ if(p){ user=Object.assign(user,p); localStorage.setItem('yapp_user',JSON.stringify(user)); updateNavAvatar(); schedulePaint(); } });
+  watchBlocks(); startChats(); renderProfile(); startPresence();
   if(prefs.notify && 'Notification' in window && Notification.permission!=='granted'){ prefs.notify=false; savePrefs(); }
 }
 $$('.navbtn').forEach(btn=>btn.onclick=()=>{
@@ -1129,13 +1136,12 @@ function closeThread(silent){
 $('#thread-back').onclick=()=>{ closeThread(); schedulePaint(); };
 function chatFill(){
   const oc=openChat, c=oc&&oc.chat; if(!c) return;
-  if(!designerOn) applyEff();
   if(c.isGroup){
     $('#thread-avatar').style.background=safeHex(c.color,'#888888'); $('#thread-avatar').innerHTML=avatarInner({name:c.name,photo:c.photo}); $('#thread-name').textContent=c.name;
-    if(!oc.watched){ oc.watched=true; c.participants.forEach(p=>{ if(p!==myD) oc.unsubs.push(watchUser(p,u=>{ const sg=u?JSON.stringify([u.name,u.color,(u.photo||'').length,u.prof,u.dnd]):''; if(oc.sig[p]!==sg){ oc.sig[p]=sg; oc.msgs.forEach(m=>refreshNode(m)); } })); }); }
+    if(!oc.watched){ oc.watched=true; c.participants.forEach(p=>{ if(p!==myD) oc.unsubs.push(watchUser(p,()=>{ oc.msgs.forEach(m=>refreshNode(m)); })); }); }
   } else {
     if(!oc.watched){ oc.watched=true; oc.unsubs.push(watchUser(oneOther(),()=>headerFill())); }
-    headerFill();
+    headerFill(); updateBlockedBanner();
   }
   const pb=$('#pinbar'); if(c.pinned){ pb.classList.add('on'); pb.querySelector('span').textContent='📌 '+c.pinned.text; pb.dataset.id=c.pinned.id; } else pb.classList.remove('on');
   tickThread();
@@ -1192,7 +1198,16 @@ function processIncoming(){
   oc.msgs.forEach(m=>{
     const sealed=m.deliverAt && m.deliverAt>now;
     if(m.from!==myD && !sealed && m.type!=='system'){
-      if(!iRead(m)){ any=true; const u={['readBy.'+myD]:true}; if(!isGroup()) u.read=true; msgRef(m.id).update(u).catch(()=>{}); }
+      if(!iRead(m)){
+        any=true;
+        const hasFx = m.bfx && m.bfx!=='ink' && m.bfx!=='gift';
+        const ref = oc.ref.collection('messages').doc(m.id);
+        const markRead = ()=>{ const u={['readBy.'+myD]:true}; if(!isGroup()) u.read=true; ref.update(u).catch(()=>{}); };
+        if(hasFx){
+          if(!oc.fxReadQueued) oc.fxReadQueued=new Set();
+          if(!oc.fxReadQueued.has(m.id)){ oc.fxReadQueued.add(m.id); setTimeout(markRead, 2200); }
+        } else markRead();
+      }
       if(m.mode==='burn' && !isGroup() && !oc.burnSet.has(m.id)) scheduleBurn(m, oc);
     }
     if(m.expiresAt && m.expiresAt<now && m.from===myD) msgRef(m.id).delete().catch(()=>{});
@@ -1345,6 +1360,9 @@ async function doForward(cid){
 }
 $('#sheetbody').addEventListener('click', async e=>{
   const b=e.target.closest('[data-act]'); if(!b || b.tagName==='INPUT') return; const act=b.dataset.act, oc=openChat;
+  if(act==='block-toggle'){ closeSheet(); toggleBlock(b.dataset.p); return; }
+  if(act==='report-open'){ reportSheet(b.dataset.p); return; }
+  if(act==='report-go'){ closeSheet(); submitReport(b.dataset.p, b.dataset.r); return; }
   if(act==='st-bg'){ stDraft.bg=STATUS_BGS[Number(b.dataset.i)]; $$('.sw2').forEach(x=>x.classList.toggle('sel',x===b)); return; }
   if(act==='st-photo'){ $('#status-input').value=''; $('#status-input').click(); return; }
   if(act==='st-publish'){ const text=$('#st-text').value.trim(); if(!text&&!stDraft.image){ toast('Escribe algo o añade una foto'); return; } closeSheet();
@@ -1358,7 +1376,7 @@ $('#sheetbody').addEventListener('click', async e=>{
   if(act==='fx-send'){ const o={bfx:fxSel.b,sfx:fxSel.s}; closeSheet(); sendText(false,o); return; }
   if(!oc) return;
   if(act==='fwd'){ doForward(b.dataset.c); }
-  else if(act==='style'){ setChatStyle(b.dataset.k); styleSheet(); }
+  else if(act==='style'){ prefs.styles[oc.id]=b.dataset.k; savePrefs(); applyStyle(b.dataset.k); styleSheet(); }
   else if(act==='attach'){ attachAction(b.dataset.k); }
   else if(act==='submit-plan'){ submitPlan(); } else if(act==='submit-capsule'){ submitCapsule(); }
   else if(act==='starred'){ starredSheet(); } else if(act==='goto'){ closeSheet(); scrollToMsg(b.dataset.id); }
@@ -1375,6 +1393,7 @@ $('#sheetbody').addEventListener('click', async e=>{
   else if(act==='hide-set'){ hideSet(); } else if(act==='theme-new'){ themeDesigner(); }
   else if(act==='theme-save'){ themeSave(); } else if(act==='theme-del'){ themeDelete(b.dataset.k); }
   else if(act==='cs-search'){ closeSheet(); openSearch(); } else if(act==='cs-info'){ closeSheet(); groupSheet(); }
+  else if(act==='block-toggle'){ closeSheet(); toggleBlock(b.dataset.p); } else if(act==='report-open'){ reportSheet(b.dataset.p); }
 });
 $('#sheetbody').addEventListener('input', e=>{ if(e.target.closest('.dz')) themePreview(); });
 $('#sheetbody').addEventListener('change', e=>{
@@ -1389,26 +1408,25 @@ $('#sheetbody').addEventListener('change', e=>{
 
 /* ---- estilo, temas y chats ocultos ---- */
 function styleSheet(){
-  const id=openChat.id, es=effStyle(), cur=es.ck||es.k, cu=prefs.custom||[], curB=effBubble(), globalOn=prefs.globalTheme&&prefs.globalTheme.on;
+  const id=openChat.id, es=effStyle(), cur=es.ck||es.k, cu=prefs.custom||[];
   openSheet(`<h3>Ajustes del chat</h3>
     <button class="srow" data-act="cs-search"><span class="ic">🔍</span>Buscar en el chat</button>
     <button class="srow" data-act="starred"><span class="ic">⭐</span>Mensajes destacados</button>
     ${isGroup()?'<button class="srow" data-act="cs-info"><span class="ic">👥</span>Info del grupo</button>':''}
     <div class="sect" style="margin-top:8px">Fondo del chat</div>
-    ${globalOn?`<div class="note-box">Tienes activado <b>«Un tema para todos mis chats»</b> en Personalizar aplicación, así que este chat usa siempre ese mismo fondo.</div>`:`
     <p class="lead2">${sharedOn()?'Lo veis igual los dos: lo que elijas aquí lo verá la otra persona también.':'Solo lo ves tú: la otra persona verá el suyo.'}</p>
     <div class="styles">${STYLES.map(s=>`<button class="stylecard ${cur===s.k?'sel':''}" data-act="style" data-k="${s.k}" style="background:${s.prev}">${s.n}</button>`).join('')}
     ${cu.map(s=>`<button class="stylecard ${cur===s.k?'sel':''}" data-act="style" data-k="${s.k}" style="background:linear-gradient(135deg,${s.v.a},${s.v.b})">${esc(s.n)}</button>`).join('')}</div>
     <button class="btn mini" data-act="theme-new">🎨 Crear tema propio</button>
-    ${cu.find(s=>s.k===cur)?`<button class="btn mini" data-act="theme-del" data-k="${cur}">🗑 Eliminar este tema</button>`:''}`}
+    ${cu.find(s=>s.k===cur)?`<button class="btn mini" data-act="theme-del" data-k="${cur}">🗑 Eliminar este tema</button>`:''}
     <div class="sect" style="margin-top:8px">Globos de texto</div>
-    <p class="lead2">La forma de las burbujas, aparte del fondo.</p>
-    ${bubbleCards(curB,'bub')}
+    ${bubbleCards(effBubble(),'csb')}
     <div class="sect" style="margin-top:8px">Este chat</div>
     <label class="trow"><span>Prioritario en modo enfoque</span><input type="checkbox" class="sw" data-act="prio" ${prefs.priority[id]?'checked':''}></label>
     <label class="trow"><span>Ocultar este chat<br><small style="color:var(--sub);font-weight:500">Desaparece de la lista; se ve con tu contraseña en el buscador</small></span><input type="checkbox" class="sw" data-act="hide" ${prefs.hidden[id]?'checked':''}></label>
-    ${isGroup()?'':`<label class="trow"><span>Escritura en directo<br><small style="color:var(--sub);font-weight:500">La otra persona ve lo que tecleas, en vivo</small></span><input type="checkbox" class="sw" data-act="live" ${prefs.live[id]?'checked':''}></label>`}`);
-  $$('[data-bub]').forEach(b=>b.onclick=()=>{ setChatBubble(b.dataset.bub); styleSheet(); });
+    ${isGroup()?'':`<label class="trow"><span>Escritura en directo<br><small style="color:var(--sub);font-weight:500">La otra persona ve lo que tecleas, en vivo</small></span><input type="checkbox" class="sw" data-act="live" ${prefs.live[id]?'checked':''}></label>
+    <div class="sect" style="margin-top:8px">Esta persona</div>${blockReportRow(oneOther())}`}`);
+  $$('[data-csb]').forEach(b=>b.onclick=()=>{ setChatBubble(b.dataset.csb); styleSheet(); });
 }
 $('#btn-style').onclick=()=>{ if(openChat) styleSheet(); };
 function starredSheet(){
@@ -1421,17 +1439,40 @@ function hideSetSheet(){
 async function hideSet(){ const pw=$('#hide-pw').value.trim(); if(pw.length<3){ toast('Mínimo 3 caracteres'); return; } prefs.hiddenHash=await sha(pw); prefs.hidden[openChat.id]=true; savePrefs(); closeSheet(); toast('Chat oculto. Escribe tu contraseña en el buscador de Chats para verlo.'); closeThread(); schedulePaint(); }
 
 let themeDraft=null;
-function themeVals(){ return {a:$('#th-a').value, b:$('#th-b').value, ang:Number($('#th-ang').value), me:$('#th-me').value, them:$('#th-them').value, text:$('#th-text').value, r:Number($('#th-r').value), font:$('#th-font').value}; }
+const BG_PRESETS=[['Atardecer','#ff8a5b','#c04cff',150],['Océano','#0a3556','#5fd0e0',180],['Bosque','#0b1a12','#3c8c5a',150],['Medianoche','#0d1224','#233a7a',165],['Chicle','#ff9be4','#71e8ff',135],['Lava','#2a0a0a','#ff5b2e',160],['Menta','#04241a','#2ecf9a',150],['Uva','#1a0b2e','#a24dff',150]];
+const BUB_PRESETS=['#ff7a59','#ff6b9d','#5b7bff','#2ecf9a','#ffb84d','#9b6bff','#ff5252','#4fd1d9','#ffffff','#1c1c22'];
+function themeVals(){
+  const acc=(id,def)=>{ const el=$(id); return el?el.value:def; };
+  const bg=themeDraft.bg||{a:'#ff6b9d',b:'#5b7bff',ang:160};
+  return {a:bg.a, b:bg.b, ang:bg.ang, me:themeDraft.me||'#ff7a59', them:themeDraft.them||'#3a2f55', text:'#ffffff', r:16, font:themeDraft.font||'Manrope'};
+}
 function themePreview(){ const th=$('#thread'); th.dataset.style='custom'; setThemeVars(th,themeVals()); }
 function themeDesigner(){
+  const cur=prefs.styles[openChat.id]||'cristal';
+  themeDraft = {bg:{a:'#ff6b9d',b:'#5b7bff',ang:160}, me:'#ff7a59', them:'#3a2f55', font:'Manrope'};
   designerOn=true;
-  openSheet(`<h3>Crear tema</h3><p class="lead2">Míralo en vivo detrás mientras lo diseñas.</p>
-    <div class="dz"><label>Fondo A<input type="color" id="th-a" value="#ff6b9d"></label><label>Fondo B<input type="color" id="th-b" value="#5b7bff"></label>
-    <label>Burbuja mía<input type="color" id="th-me" value="#ff7a59"></label><label>Burbuja otra<input type="color" id="th-them" value="#3a2f55"></label>
-    <label>Texto<input type="color" id="th-text" value="#ffffff"></label><label>Ángulo<input type="range" id="th-ang" min="0" max="360" value="160"></label>
-    <label>Redondeo<input type="range" id="th-r" min="4" max="28" value="20"></label><label>Letra<select id="th-font">${Object.keys(FONTS).map(f=>`<option>${f}</option>`).join('')}</select></label></div>
-    <input class="field" id="th-name" placeholder="Nombre del tema" maxlength="20"><button class="btn" data-act="theme-save">Guardar tema</button>`, ()=>{ designerOn=false; applyEff(); });
+  renderThemeDesigner(()=>{ designerOn=false; applyEff(); });
   themePreview();
+}
+function renderThemeDesigner(onClose){
+  openSheet(`<h3>Crear tema</h3><p class="lead2">Elige un fondo, un color para cada burbuja y una letra. Se ve en vivo detrás.</p>
+    <div class="sect">Fondo</div>
+    <div class="td-bgs">${BG_PRESETS.map(([n,a,b,ang])=>`<button class="td-bg ${themeDraft.bg.a===a&&themeDraft.bg.b===b?'sel':''}" data-tdbg="${n}" style="background:linear-gradient(${ang}deg,${a},${b})"></button>`).join('')}
+      <button class="td-bg td-custom ${themeDraft.bg.custom?'sel':''}" data-tdbg="custom" style="background:linear-gradient(135deg,${themeDraft.bg.a},${themeDraft.bg.b})">✎</button></div>
+    ${themeDraft.bg.custom?`<div class="row-sw" style="margin:-4px 0 14px"><input type="color" id="td-a" value="${themeDraft.bg.a}"><input type="color" id="td-b" value="${themeDraft.bg.b}"><input type="range" id="td-ang" min="0" max="360" value="${themeDraft.bg.ang}"></div>`:''}
+    <div class="sect">Burbujas mías</div><div class="row-sw">${BUB_PRESETS.map(c=>`<i class="sw3 ${themeDraft.me===c?'sel':''}" data-tdme="${c}" style="background:${c}"></i>`).join('')}<input type="color" id="td-me" value="${themeDraft.me}"></div>
+    <div class="sect">Burbujas de la otra persona</div><div class="row-sw">${BUB_PRESETS.map(c=>`<i class="sw3 ${themeDraft.them===c?'sel':''}" data-tdthem="${c}" style="background:${c}"></i>`).join('')}<input type="color" id="td-them" value="${themeDraft.them}"></div>
+    <div class="sect">Letra</div><div class="chips2">${Object.keys(FONTS_UI).map(f=>`<button class="c2 ${themeDraft.font===f?'sel':''}" data-tdfont="${f}" style="font-family:${FONTS_UI[f]}">${f}</button>`).join('')}</div>
+    <input class="field" id="th-name" placeholder="Nombre del tema" maxlength="20" style="margin-top:14px"><button class="btn" data-act="theme-save">Guardar tema</button>`, onClose);
+  $$('[data-tdbg]').forEach(b=>b.onclick=()=>{ const k=b.dataset.tdbg; if(k==='custom') themeDraft.bg=Object.assign({custom:true},themeDraft.bg);
+    else { const p=BG_PRESETS.find(x=>x[0]===k); themeDraft.bg={a:p[1],b:p[2],ang:p[3]}; } renderThemeDesigner(onClose); themePreview(); });
+  const wireColor=(id,fn)=>{ const el=$(id); if(el) el.addEventListener('input',e=>{ fn(e.target.value); themePreview(); }); };
+  wireColor('#td-a',v=>themeDraft.bg.a=v); wireColor('#td-b',v=>themeDraft.bg.b=v);
+  const ar=$('#td-ang'); if(ar) ar.addEventListener('input',e=>{ themeDraft.bg.ang=Number(e.target.value); themePreview(); });
+  $$('[data-tdme]').forEach(b=>b.onclick=()=>{ themeDraft.me=b.dataset.tdme; renderThemeDesigner(onClose); themePreview(); });
+  $$('[data-tdthem]').forEach(b=>b.onclick=()=>{ themeDraft.them=b.dataset.tdthem; renderThemeDesigner(onClose); themePreview(); });
+  wireColor('#td-me',v=>themeDraft.me=v); wireColor('#td-them',v=>themeDraft.them=v);
+  $$('[data-tdfont]').forEach(b=>b.onclick=()=>{ themeDraft.font=b.dataset.tdfont; renderThemeDesigner(onClose); themePreview(); });
 }
 function themeSave(){
   const n=$('#th-name').value.trim(); if(!n){ toast('Ponle un nombre al tema'); return; }
@@ -1464,6 +1505,7 @@ const isHarsh=t=>HARSH.test(t) || (t.replace(/[^A-Za-zÁÉÍÓÚÑ]/g,'').length
 let pendingOpts=null;
 function sendText(force,opts){
   const t=inputEl.value.trim(); if(!t||!openChat) return; opts=opts||{};
+  if(!isGroup() && isBlocked(oneOther())){ toast('Has bloqueado a esta persona. Desbloquéala desde su perfil para escribirle.'); return; }
   if(compose.edit){ const id=compose.edit.id; compose.edit=null; inputEl.value=''; toggleSendMic(); renderComposeBars(); msgRef(id).update({text:t,edited:true}).catch(err=>showBanner(explainFirebaseError(err))); return; }
   if(prefs.tone && force!==true && isHarsh(t)){ pendingOpts=opts; openSheet(`<h3>¿Seguro que quieres mandarlo así?</h3><p class="lead2">Suena bastante brusco. A veces ayuda respirar un segundo antes de enviar.</p><button class="btn" data-act="tone-edit">Lo repienso</button><button class="srow danger" data-act="tone-send">Enviar igualmente</button>`); return; }
   const extra={text:t}, seen=new Set(), ms=mentionSel.filter(x=>t.includes('@'+x.n)&&!seen.has(x.p)&&seen.add(x.p)); if(ms.length) extra.mentions=ms;
@@ -1994,7 +2036,8 @@ function renderProfile(){
       <label class="prow"><span>Bloqueo con Face ID / huella<small>Pide desbloquear al abrir Yapp</small></span><input type="checkbox" class="sw" id="opt-lock" ${prefs.lock?'checked':''}></label>
     </div>
     <div class="plist glass"><div class="prow"><span>Número</span><span>${esc(user.phone)}</span></div></div>
-    <div class="plist glass"><div class="prow danger" id="btn-logout">Cerrar sesión</div></div>`;
+    <div class="plist glass"><div class="prow"><span>Legal</span><span><a href="privacy.html" target="_blank" style="color:var(--text)">Privacidad</a> · <a href="terms.html" target="_blank" style="color:var(--text)">Términos</a></span></div></div>
+    <div class="plist glass"><div class="prow danger" id="btn-logout">Cerrar sesión</div><div class="prow danger" id="btn-delete-account">Eliminar cuenta</div></div>`;
   refreshPcard();
   $('#my-pic-input').addEventListener('change', e=>{ const f=e.target.files[0]; if(!f) return;
     openCropper(f,{shape:'circle',ratio:1,outW:320,outH:320,q:.85,title:'Encuadra tu foto'}, async u=>{ user.photo=u; localStorage.setItem('yapp_user',JSON.stringify(user)); try{ await db.collection('users').doc(myD).set({photo:u},{merge:true}); }catch(err){ showBanner(explainFirebaseError(err)); } refreshPcard(); updateNavAvatar(); }); e.target.value=''; });
@@ -2011,6 +2054,7 @@ function renderProfile(){
   $('#opt-tone').onchange=e=>{ prefs.tone=e.target.checked; savePrefs(); };
   $('#opt-lock').onchange=async e=>{ if(e.target.checked){ const ok=await enableLock(); if(!ok){ e.target.checked=false; toast('Tu dispositivo no permite el bloqueo biométrico aquí'); } else toast('Bloqueo activado'); } else { prefs.lock=false; savePrefs(); localStorage.removeItem('yapp_cred'); } };
   $('#btn-logout').onclick=async()=>{ if(confirm('¿Cerrar sesión y borrar tus datos locales?')){ try{ if(auth) await auth.signOut(); }catch(e){} localStorage.clear(); location.reload(); } };
+  $('#btn-delete-account').onclick=deleteAccountFlow;
 }
 
 /* ---------- hoja: personalizar tarjeta de perfil ---------- */
@@ -2281,6 +2325,114 @@ function batchStyleSheet(){
     }
     savePrefs(); closeSheet(); toast(`Estilo aplicado a ${batchSel.size} chat${batchSel.size===1?'':'s'}`);
   };
+}
+/* ================= bloquear y reportar ================= */
+let blockedSet = new Set();
+function watchBlocks(){
+  if(!db||!myD) return;
+  db.collection('blocks').doc(myD).onSnapshot(d=>{
+    blockedSet = new Set((d.exists && d.data().list) || []);
+    schedulePaint(); if(openChat && !isGroup()) chatFill();
+  }, e=>console.warn('blocks', e));
+}
+const isBlocked = phone => blockedSet.has(phone);
+async function toggleBlock(phone){
+  if(!db||!myD) return;
+  const ref=db.collection('blocks').doc(myD);
+  try{
+    if(isBlocked(phone)){ await ref.set({list:FV.arrayRemove(phone)},{merge:true}); toast(nameOf(phone)+' desbloqueado/a'); }
+    else{ if(!confirm('¿Bloquear a '+nameOf(phone)+'? No podrá enviarte más mensajes.')) return; await ref.set({list:FV.arrayUnion(phone)},{merge:true}); toast(nameOf(phone)+' bloqueado/a'); }
+  }catch(e){ showBanner(explainFirebaseError(e)); }
+}
+const REPORT_REASONS=['Spam o publicidad','Contenido inapropiado','Acoso o amenazas','Suplantación de identidad','Otro motivo'];
+function reportSheet(phone){
+  openSheet(`<h3>Reportar a ${esc(nameOf(phone))}</h3><p class="lead2">Cuéntanos qué ha pasado. Nadie sabrá que has sido tú.</p>
+    ${REPORT_REASONS.map(r=>`<button class="srow" data-act="report-go" data-p="${esc(phone)}" data-r="${esc(r)}"><span class="ic">🚩</span>${esc(r)}</button>`).join('')}`);
+}
+async function submitReport(phone, reason){
+  if(!db||!myD) return;
+  try{ await db.collection('reports').add({from:myD, target:phone, reason, ts:FV.serverTimestamp()}); toast('Gracias, hemos recibido tu reporte.'); }
+  catch(e){ showBanner(explainFirebaseError(e)); }
+}
+function blockReportRow(phone){
+  if(!phone||phone===myD) return '';
+  const blocked=isBlocked(phone);
+  return `<button class="srow ${blocked?'':'danger'}" data-act="block-toggle" data-p="${esc(phone)}"><span class="ic">🚫</span>${blocked?'Desbloquear a '+esc(nameOf(phone)):'Bloquear a '+esc(nameOf(phone))}</button>
+    <button class="srow danger" data-act="report-open" data-p="${esc(phone)}"><span class="ic">🚩</span>Reportar a ${esc(nameOf(phone))}</button>`;
+}
+
+/* ================= borrar cuenta ================= */
+async function deleteAccountFlow(){
+  if(!confirm('¿Seguro que quieres eliminar tu cuenta de Yapp? Tu perfil, foto y número dejarán de estar disponibles.')) return;
+  if(!confirm('Esto no se puede deshacer. Los mensajes que ya enviaste seguirán viéndose en los chats de otras personas, pero sin tu nombre ni tu foto. ¿Continuar?')) return;
+  try{
+    if(db && myD) await db.collection('users').doc(myD).delete();
+    if(db && myD) await db.collection('blocks').doc(myD).delete().catch(()=>{});
+    if(db && myUid) await db.collection('uids').doc(myUid).delete().catch(()=>{});
+    if(auth) await auth.signOut();
+  }catch(e){ showBanner(explainFirebaseError(e)); }
+  finally{ localStorage.clear(); location.reload(); }
+}
+
+/* ================= verificación por SMS real ================= */
+let recaptchaV=null, smsConfirm=null;
+function ensureRecaptcha(){
+  if(!auth) return null;
+  if(!recaptchaV){ try{ recaptchaV=new firebase.auth.RecaptchaVerifier('recaptcha-box',{size:'invisible'},auth); }catch(e){ console.warn(e); } }
+  return recaptchaV;
+}
+function explainSmsError(err){
+  const c=(err&&(err.code||err.message))||'';
+  if(c.includes('invalid-phone-number')) return 'Ese número no parece válido. Revisa el prefijo y las cifras.';
+  if(c.includes('too-many-requests')) return 'Demasiados intentos desde este número o dispositivo. Espera un poco.';
+  if(c.includes('quota-exceeded')) return 'Se agotó la cuota de SMS del proyecto. En Firebase, activa el plan Blaze para enviar SMS reales.';
+  if(c.includes('invalid-verification-code')) return 'Ese código no es correcto.';
+  if(c.includes('code-expired')) return 'El código ha caducado. Pide uno nuevo.';
+  if(c.includes('captcha-check-failed')||c.includes('argument-error')) return 'No se pudo comprobar que eres una persona real. Recarga la página e inténtalo otra vez.';
+  if(c.includes('operation-not-allowed')) return 'Falta activar el proveedor de teléfono: Firebase → Authentication → Sign-in method → Teléfono → Habilitar.';
+  if(c.includes('credential-already-in-use')) return 'Ese número ya tiene una cuenta de Yapp en otro dispositivo.';
+  return explainFirebaseError(err);
+}
+async function sendSmsCode(){
+  const num=$('#phone-input').value.trim(); if(num.length<6) return;
+  const full=($('#cc').value.trim()+num).replace(/[^\d+]/g,'');
+  const btn=$('#btn-send-code'); btn.disabled=true; btn.textContent='Enviando SMS…';
+  try{
+    if(!db||!auth) throw {code:'app/no-firebase'};
+    await ensureAuth(); if(!auth.currentUser) throw {code:'auth/no-session'};
+    const v=ensureRecaptcha(); if(!v) throw {code:'app/no-recaptcha'};
+    smsConfirm = await auth.currentUser.linkWithPhoneNumber(full, v);
+    pendingFull=full; $('#phone-display').textContent=full;
+    goStep('step-code'); document.querySelector('.code-boxes input').focus();
+  }catch(err){
+    console.error(err); showBanner(explainSmsError(err));
+    try{ if(recaptchaV){ const id=await recaptchaV.render(); if(window.grecaptcha) grecaptcha.reset(id); } }catch(_){}
+  }finally{ btn.disabled=false; btn.textContent='Enviar código'; }
+}
+async function verifySmsCode(){
+  const code=[...$$('.code-boxes input')].map(i=>i.value).join(''); if(code.length<4) return;
+  const btn=$('#btn-verify'); btn.disabled=true; btn.textContent='Verificando…';
+  try{
+    if(!smsConfirm) throw {code:'sms/no-request'};
+    await smsConfirm.confirm(code);
+    goStep('step-profile');
+  }catch(err){ console.error(err); showBanner(explainSmsError(err)); }
+  finally{ btn.disabled=false; btn.textContent='Verificar'; }
+}
+function profileSheet(phone){
+  const u=phone===myD?user:userCache[phone]; if(!u) return; const im=safeImg(u.photo);
+  openSheet(profileCardHTML(u,{})+`<div class="row2">${im?`<button class="btn mini" data-act="pv-photo" data-p="${phone}">Ver foto</button>`:''}${activeStatus(u)?`<button class="btn mini" data-act="pv-status" data-p="${phone}">Ver estado</button>`:''}</div>
+    ${phone!==myD?`<div class="sect">Esta persona</div>${blockReportRow(phone)}`:''}`);
+}
+/* ---------- chat bloqueado: aviso y compositor deshabilitado ---------- */
+function updateBlockedBanner(){
+  const oc=openChat; if(!oc||!oc.chat) return; const bl=!isGroup() && isBlocked(oneOther());
+  let bar=$('#blockedbar');
+  if(bl){
+    if(!bar){ bar=document.createElement('div'); bar.id='blockedbar'; bar.style.cssText='margin:0 14px 6px;padding:9px 12px;border-radius:14px;background:rgba(255,80,80,.18);border:1px solid rgba(255,120,120,.35);font-size:.78rem;font-weight:700;text-align:center;color:#ffb3b3;'; $('#composer').before(bar); }
+    bar.textContent='Has bloqueado a esta persona · no puede escribirte ni tú a ella';
+    $('#composer').style.display='none';
+  } else { if(bar) bar.remove(); $('#composer').style.display='flex'; }
 }
 
 /* =============== ARRANQUE =============== */
