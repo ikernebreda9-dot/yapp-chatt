@@ -1120,7 +1120,7 @@ function setChatStyle(k){
   applyEff();
 }
 /* =============== notificaciones push (FCM) =============== */
-const VAPID_KEY = "PEGA_AQUI_TU_VAPID_KEY";
+const VAPID_KEY = "BN1BHUKKgUEiGssFHmW4LWqJ4IYOJo1-obbKkR2K7CEq3RQ8bMyV0zBUjE_5iKbTec9B6uhWaUufkyFZ3Bu0ndc";
 async function initPush(){
   if(!db || !myD) return null;
   if(!('serviceWorker' in navigator) || typeof firebase==='undefined' || !firebase.messaging){ console.warn('Push no disponible en este navegador'); return null; }
